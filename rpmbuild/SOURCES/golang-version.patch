@@ -1,0 +1,10 @@
+--- go.mod.orig	2025-01-24 16:11:18.712270899 +0200
++++ go.mod	2025-01-24 16:11:26.052422212 +0200
+@@ -1,6 +1,6 @@
+ module github.com/ollama/ollama
+ 
+-go 1.23.4
++go 1.23.1
+ 
+ require (
+ 	github.com/containerd/console v1.0.3
