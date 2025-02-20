@@ -1,11 +1,11 @@
-diff -Nru '--exclude=.git' ollama-0.5.7.org/llama/llama.go ollama-0.5.7/llama/llama.go
---- ollama-0.5.7.org/llama/llama.go	2025-01-24 07:37:24.246931350 +0700
-+++ ollama-0.5.7/llama/llama.go	2025-01-24 07:38:31.319285429 +0700
-@@ -5,6 +5,7 @@
+diff -Nru '--exclude=.git' ollama-0.5.11.org/llama/llama.go ollama-0.5.11/llama/llama.go
+--- ollama-0.5.11.org/llama/llama.go	2025-02-19 01:11:03.805371949 +0700
++++ ollama-0.5.11/llama/llama.go	2025-02-19 01:27:16.297777394 +0700
+@@ -3,6 +3,7 @@
  /*
- #cgo CFLAGS: -O3 -flto -std=c17 -DGGML_BUILD=1 -DNDEBUG -DLOG_DISABLE_LOGS -DGGML_USE_LLAMAFILE -DGGML_USE_CPU -DGGML_USE_CPU_AARCH64
- #cgo CXXFLAGS: -O3 -flto -std=c++17 -DGGML_BUILD=1 -DNDEBUG -DLOG_DISABLE_LOGS -DGGML_USE_LLAMAFILE -DGGML_USE_CPU -DGGML_USE_CPU_AARCH64
+ #cgo CFLAGS: -std=c11
+ #cgo CXXFLAGS: -std=c++17
 +#cgo LDFLAGS: -lstdc++fs
- #cgo amd64,avx CFLAGS: -mavx
- #cgo amd64,avx CXXFLAGS: -mavx
- #cgo amd64,avx2 CFLAGS: -mavx2 -mfma -mf16c
+ #cgo CPPFLAGS: -I${SRCDIR}/llama.cpp/include
+ #cgo CPPFLAGS: -I${SRCDIR}/llama.cpp/common
+ #cgo CPPFLAGS: -I${SRCDIR}/llama.cpp/examples/llava

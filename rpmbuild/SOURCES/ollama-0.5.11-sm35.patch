@@ -1,0 +1,12 @@
+diff -Nru '--exclude=.git' ollama-0.5.11.org/CMakePresets.json ollama-0.5.11/CMakePresets.json
+--- ollama-0.5.11.org/CMakePresets.json	2025-02-19 01:11:03.797372328 +0700
++++ ollama-0.5.11/CMakePresets.json	2025-02-19 01:35:30.566993198 +0700
+@@ -21,7 +21,7 @@
+       "name": "CUDA 11",
+       "inherits": [ "CUDA" ],
+       "cacheVariables": {
+-        "CMAKE_CUDA_ARCHITECTURES": "50;52;53;60;61;62;70;72;75;80;86"
++        "CMAKE_CUDA_ARCHITECTURES": "35;37;50;52;53"
+       }
+     },
+     {

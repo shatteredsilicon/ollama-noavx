@@ -1,30 +1,12 @@
-diff -Nru '--exclude=.git' ollama-0.5.7.org/make/cuda.make ollama-0.5.7/make/cuda.make
---- ollama-0.5.7.org/make/cuda.make	2025-01-22 23:56:10.768357614 +0700
-+++ ollama-0.5.7/make/cuda.make	2025-01-24 07:44:49.737274091 +0700
-@@ -25,8 +25,8 @@
- 	GPU_VECTOR_FLAGS=$(if $(filter avx512,$(GPU_RUNNER_CPU_FLAGS)),avx512f avx512dq avx512bw) $(filter-out avx512,$(GPU_RUNNER_CPU_FLAGS))
- 	GPU_COMPILER_EXTRA_FLAGS = -fPIC -Wno-unused-function -std=c++17
- 	GPU_LIBS = $(sort $(wildcard $(addsuffix *.$(SHARED_EXT).*,$(addprefix $(GPU_LIB_DIR)/$(SHARED_PREFIX),$(GPU_RUNNER_LIBS_SHORT)))))
--	GPU_COMPILER_CFLAGS = $(CFLAGS) -Xcompiler -fPIC -D_GNU_SOURCE
--	GPU_COMPILER_CXXFLAGS = $(CXXFLAGS) -Xcompiler -fPIC -D_GNU_SOURCE
-+	GPU_COMPILER_CFLAGS = -Xcompiler -fPIC -D_GNU_SOURCE -Xcompiler -ffunction-sections -Xcompiler -fdata-sections -Xlinker --gc-sections -Xlinker --strip-all
-+	GPU_COMPILER_CXXFLAGS = $(GPU_COMPILER_CFLAGS)
- endif
- GPU_DIST_LIB_DEPS= $(sort $(addprefix $(DIST_GPU_RUNNER_DEPS_DIR)/,$(notdir $(GPU_LIBS))))
+diff -Nru '--exclude=.git' ollama-0.5.11.org/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt ollama-0.5.11/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt
+--- ollama-0.5.11.org/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt	2025-02-19 01:11:03.809371761 +0700
++++ ollama-0.5.11/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt	2025-02-19 01:32:20.096655695 +0700
+@@ -137,7 +137,7 @@
+     endif()
  
-diff -Nru '--exclude=.git' ollama-0.5.7.org/make/gpu.make ollama-0.5.7/make/gpu.make
---- ollama-0.5.7.org/make/gpu.make	2025-01-22 23:56:10.768357614 +0700
-+++ ollama-0.5.7/make/gpu.make	2025-01-24 07:49:19.054682043 +0700
-@@ -53,10 +53,10 @@
- 	$(CCACHE) $(GPU_COMPILER) -c $(GPU_COMPILER_CFLAGS) $(GPU_COMPILER_CUFLAGS) $(GPU_RUNNER_ARCH_FLAGS) -o $@ $<
- $(BUILD_DIR)/%.$(GPU_RUNNER_NAME).$(OBJ_EXT): %.c
- 	@-mkdir -p $(dir $@)
--	$(CCACHE) $(GPU_COMPILER) -c $(GPU_COMPILER_CFLAGS) -o $@ $<
-+	$(CCACHE) $(GPU_COMPILER) -c -Xcompiler -Wno-unused-function $(GPU_COMPILER_CFLAGS) -o $@ $<
- $(BUILD_DIR)/%.$(GPU_RUNNER_NAME).$(OBJ_EXT): %.cpp
- 	@-mkdir -p $(dir $@)
--	$(CCACHE) $(GPU_COMPILER) -c $(GPU_COMPILER_CXXFLAGS) -o $@ $<
-+	$(CCACHE) $(GPU_COMPILER) -c -Xcompiler -Wno-unused-function $(GPU_COMPILER_CXXFLAGS) -o $@ $<
- $(RUNNERS_BUILD_DIR)/$(GPU_RUNNER_NAME)$(GPU_RUNNER_EXTRA_VARIANT)/ollama_llama_server$(EXE_EXT): TARGET_CGO_LDFLAGS = $(CGO_EXTRA_LDFLAGS) -L"$(RUNNERS_BUILD_DIR)/$(GPU_RUNNER_NAME)$(GPU_RUNNER_EXTRA_VARIANT)/"
- $(RUNNERS_BUILD_DIR)/$(GPU_RUNNER_NAME)$(GPU_RUNNER_EXTRA_VARIANT)/ollama_llama_server$(EXE_EXT): $(RUNNERS_BUILD_DIR)/$(GPU_RUNNER_NAME)$(GPU_RUNNER_EXTRA_VARIANT)/$(SHARED_PREFIX)ggml_$(GPU_RUNNER_NAME).$(SHARED_EXT) ./llama/*.go ./llama/runner/*.go $(COMMON_SRCS) $(COMMON_HDRS)
- 	@-mkdir -p $(dir $@)
+     if (NOT MSVC)
+-        list(APPEND CUDA_CXX_FLAGS -Wno-pedantic)
++        list(APPEND CUDA_CXX_FLAGS -Wno-pedantic -Wno-unused-function)
+     endif()
+ 
+     list(JOIN   CUDA_CXX_FLAGS " " CUDA_CXX_FLAGS_JOINED)  # pass host compiler flags as a single argument
