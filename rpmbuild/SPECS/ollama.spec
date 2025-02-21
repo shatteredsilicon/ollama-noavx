@@ -1,27 +1,29 @@
 %define debug_package %{nil}
 
 Name:           ollama
-Version:        0.5.7
-Release:        8%{?dist}
+Version:        0.5.11
+Release:        1%{?dist}
 Summary:        Tool for running AI models on-premise
 License:        MIT
 URL:            https://ollama.com
 Source:         %{name}-%{version}.tar.gz
-Source1:        %{name}-%{version}-vendor.tar.xz
-Source2:        ollama.service
+Source1:        %{name}-%{version}-vendor.tar.gz
+Source2:        %{name}.service
 Source3:        %{name}-user.conf
-Patch0:         enable-lto.patch
-Patch1:		fix-linking-stdcppfs.patch
-Patch2:		optimize-gpu-compiler.patch
-Patch3:		fix-missing-cpp17-flag.patch
-Patch4:		golang-version.patch
-Patch5:		ollama-0.5.7-sm35.patch
+Patch0:         ollama-disable-avx.patch
+Patch1:         remove-redundant-backends.patch
+Patch2:         fix-linking-stdcppfs.patch
+Patch3:         optimize-gpu-compiler.patch
+Patch4:         ollama-0.5.11-sm35.patch
+Patch5:         enable-lto.patch
+Patch6:         golang-version.patch
+BuildRequires:  cmake >= 3.24
 BuildRequires:  zstd
 BuildRequires:  golang >= 1.23.1
 BuildRequires:  gcc-c++
 BuildRequires:  libstdc++
 BuildRequires:  systemd-rpm-macros
-BuildRequires:  cuda-toolkit-11-8 cuda-toolkit-12-6
+BuildRequires:  cuda-toolkit-11-8
 %{?sysusers_requires_compat}
 
 Requires: nvidia-driver-cuda-libs libcublas cuda-cudart
@@ -42,20 +44,22 @@ can be imported.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4
-%patch5
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
 
 %build
-export OLLAMA_SKIP_ROCM_GENERATE=1
 export CFLAGS='-ffunction-sections -fdata-sections -flto -Wl,--gc-sections -Wl,--strip-all'
 export CXXFLAGS=$CFLAGS
 export LDFLAGS='-flto -Wl,--gc-sections -Wl,--strip-all -lstdc++fs'
+export PATH=/usr/local/cuda-11/bin:$PATH
 export GIN_MODE=release
 export GOFLAGS="-mod=vendor -ldflags=-s -ldflags=-w -buildvcs=false"
 export GOAMD64=v2
+export CGO_ENABLED=1
 
-# Set CUSTOM_CPU_FLAGS="" to disable AVX instructions.
-%{__make} CUSTOM_CPU_FLAGS="" %{?_smp_mflags} RUNNER_TARGETS="cuda_v12 cuda_v11 cpu" runners
+cmake --preset="CUDA 11"
+cmake --build build --config Release
 go build -v .
 
 %install
@@ -66,8 +70,8 @@ install -d %{buildroot}%{_localstatedir}/lib/%{name}
 install -d %{buildroot}/usr/lib/systemd/system
 install -p -m 0644 %{SOURCE2} %{buildroot}/usr/lib/systemd/system/%{name}.service
 
-install -d %{buildroot}%{_prefix}/lib/ollama/runners
-cp -r llama/build/linux-amd64/runners/* %{buildroot}%{_prefix}/lib/ollama/runners/
+install -d %{buildroot}%{_prefix}/lib/ollama
+cp -r build/lib/ollama/* %{buildroot}%{_prefix}/lib/ollama
 
 mkdir -p "%{buildroot}/%{_docdir}/%{name}"
 cp -Ra docs/* "%{buildroot}/%{_docdir}/%{name}"
@@ -89,12 +93,12 @@ cp -Ra docs/* "%{buildroot}/%{_docdir}/%{name}"
 %license LICENSE
 %{_docdir}/%{name}
 %{_bindir}/%{name}
-%{_prefix}/lib/ollama/runners
+%{_prefix}/lib/ollama
 %{_unitdir}/%{name}.service
 %{_sysusersdir}/%{name}.conf
 %attr(-, ollama, ollama) %{_localstatedir}/lib/%{name}
 
 %changelog
-* Thu Jan 23 2025 <nthien86@gmail.com> - 0.5.7-7
-- Initial release with 0.5.7 patched to disable AVX requirements
+* Wed Feb 19 2025 <nthien86@gmail.com> - 0.5.11-1
+- Initial release with 0.5.11 patched to disable AVX requirements
 

@@ -1,0 +1,29 @@
+diff -Nru '--exclude=.git' ollama-0.5.11.org/ml/backend/ggml/ggml/src/CMakeLists.txt ollama-0.5.11/ml/backend/ggml/ggml/src/CMakeLists.txt
+--- ollama-0.5.11.org/ml/backend/ggml/ggml/src/CMakeLists.txt	2025-02-19 01:11:03.805371949 +0700
++++ ollama-0.5.11/ml/backend/ggml/ggml/src/CMakeLists.txt	2025-02-19 01:16:09.523759846 +0700
+@@ -288,15 +288,16 @@
+         message(FATAL_ERROR "GGML_CPU_ALL_VARIANTS requires GGML_BACKEND_DL")
+     endif()
+     add_custom_target(ggml-cpu)
+-    ggml_add_cpu_backend_variant(sandybridge    AVX)
+-    ggml_add_cpu_backend_variant(haswell        AVX F16C AVX2 FMA)
+-    ggml_add_cpu_backend_variant(skylakex       AVX F16C AVX2 FMA AVX512)
+-    ggml_add_cpu_backend_variant(icelake        AVX F16C AVX2 FMA AVX512 AVX512_VBMI AVX512_VNNI)
+-    ggml_add_cpu_backend_variant(alderlake      AVX F16C AVX2 FMA AVX_VNNI)
+-    if (NOT MSVC)
+-        # MSVC doesn't support AMX
+-        ggml_add_cpu_backend_variant(sapphirerapids AVX F16C AVX2 FMA AVX512 AVX512_VBMI AVX512_VNNI AVX512_BF16 AMX_TILE AMX_INT8)
+-    endif()
++    ggml_add_cpu_backend_variant(westmere       SSE42)
++    # ggml_add_cpu_backend_variant(sandybridge    AVX)
++    # ggml_add_cpu_backend_variant(haswell        AVX F16C AVX2 FMA)
++    # ggml_add_cpu_backend_variant(skylakex       AVX F16C AVX2 FMA AVX512)
++    # ggml_add_cpu_backend_variant(icelake        AVX F16C AVX2 FMA AVX512 AVX512_VBMI AVX512_VNNI)
++    # ggml_add_cpu_backend_variant(alderlake      AVX F16C AVX2 FMA AVX_VNNI)
++    # if (NOT MSVC)
++    #     # MSVC doesn't support AMX
++    #     ggml_add_cpu_backend_variant(sapphirerapids AVX F16C AVX2 FMA AVX512 AVX512_VBMI AVX512_VNNI AVX512_BF16 AMX_TILE AMX_INT8)
++    # endif()
+ else ()
+     ggml_add_cpu_backend_variant_impl("")
+ endif()
