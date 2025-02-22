@@ -59,7 +59,7 @@ export GOAMD64=v2
 export CGO_ENABLED=1
 
 cmake --preset="CUDA 11"
-cmake --build build --config Release
+cmake --build build --config Release %{?_smp_mflags}
 go build -v .
 
 %install
