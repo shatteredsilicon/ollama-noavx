@@ -101,4 +101,5 @@ cp -Ra docs/* "%{buildroot}/%{_docdir}/%{name}"
 %changelog
 * Wed Feb 19 2025 <nthien86@gmail.com> - 0.5.11-1
 - Initial release with 0.5.11 patched to disable AVX requirements
+- CUDA 11 only, compute model 3.5 - 9.0
 
