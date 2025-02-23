@@ -61,6 +61,7 @@ export CGO_ENABLED=1
 cmake --preset="CUDA 11"
 cmake --build build --config Release %{?_smp_mflags}
 go build -v .
+strip %{name}
 
 %install
 install -p -D -m 0644 %{SOURCE3} %{buildroot}%{_sysusersdir}/%{name}.conf
