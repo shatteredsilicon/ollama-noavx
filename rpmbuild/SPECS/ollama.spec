@@ -17,6 +17,7 @@ Patch3:         optimize-gpu-compiler.patch
 Patch4:         support-all-compute-models-for-cuda11.patch
 Patch5:         enable-lto.patch
 Patch6:         golang-version.patch
+Patch7:         replace-openroot-to-build-on-go1.23.1.patch
 BuildRequires:  cmake >= 3.24
 BuildRequires:  zstd
 BuildRequires:  golang >= 1.23.1
@@ -47,6 +48,7 @@ can be imported.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
 
 %build
 export CFLAGS='-ffunction-sections -fdata-sections -flto -Wl,--gc-sections -Wl,--strip-all'
