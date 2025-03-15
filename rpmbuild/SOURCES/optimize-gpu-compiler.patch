@@ -1,7 +1,7 @@
-diff -Nru '--exclude=.git' ollama-0.5.11.org/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt ollama-0.5.11/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt
---- ollama-0.5.11.org/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt	2025-02-19 01:11:03.809371761 +0700
-+++ ollama-0.5.11/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt	2025-02-19 01:32:20.096655695 +0700
-@@ -137,7 +137,7 @@
+diff -Nru '--exclude=.git' ollama-0.6.0.org/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt ollama-0.6.0/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt
+--- ollama-0.6.0.org/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt	2025-03-16 01:12:18.026914343 +0700
++++ ollama-0.6.0/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt	2025-03-16 02:07:03.162294567 +0700
+@@ -141,7 +141,7 @@
      endif()
  
      if (NOT MSVC)

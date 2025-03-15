@@ -1,7 +1,7 @@
 %define debug_package %{nil}
 
 Name:           ollama
-Version:        0.5.11
+Version:        0.6.0
 Release:        1%{?dist}
 Summary:        Tool for running AI models on-premise
 License:        MIT
@@ -14,7 +14,7 @@ Patch0:         ollama-disable-avx.patch
 Patch1:         remove-redundant-backends.patch
 Patch2:         fix-linking-stdcppfs.patch
 Patch3:         optimize-gpu-compiler.patch
-Patch4:         ollama-0.5.11-sm35.patch
+Patch4:         support-all-compute-models-for-cuda11.patch
 Patch5:         enable-lto.patch
 Patch6:         golang-version.patch
 BuildRequires:  cmake >= 3.24
@@ -64,14 +64,14 @@ go build -v .
 strip %{name}
 
 %install
-install -p -D -m 0644 %{SOURCE3} %{buildroot}%{_sysusersdir}/%{name}.conf
-install -D -m 0755 %{name} %{buildroot}/%{_bindir}/%{name}
-install -d %{buildroot}%{_localstatedir}/lib/%{name}
+%{__install} -p -D -m 0644 %{SOURCE3} %{buildroot}%{_sysusersdir}/%{name}.conf
+%{__install} -D -m 0755 %{name} %{buildroot}/%{_bindir}/%{name}
+%{__install} -d %{buildroot}%{_localstatedir}/lib/%{name}
 
-install -d %{buildroot}/usr/lib/systemd/system
-install -p -m 0644 %{SOURCE2} %{buildroot}/usr/lib/systemd/system/%{name}.service
+%{__install} -d %{buildroot}/usr/lib/systemd/system
+%{__install} -p -m 0644 %{SOURCE2} %{buildroot}/usr/lib/systemd/system/%{name}.service
 
-install -d %{buildroot}%{_prefix}/lib/ollama
+%{__install} -d %{buildroot}%{_prefix}/lib/ollama
 cp -r build/lib/ollama/* %{buildroot}%{_prefix}/lib/ollama
 
 mkdir -p "%{buildroot}/%{_docdir}/%{name}"
@@ -100,6 +100,9 @@ cp -Ra docs/* "%{buildroot}/%{_docdir}/%{name}"
 %attr(-, ollama, ollama) %{_localstatedir}/lib/%{name}
 
 %changelog
+* Sun Mar 16 2025 <nthien86@gmail.com> - 0.6.0-1
+- 0.6.0 patched to disable AVX requirements
+
 * Wed Feb 19 2025 <nthien86@gmail.com> - 0.5.11-1
 - Initial release with 0.5.11 patched to disable AVX requirements
 - CUDA 11 only, compute model 3.5 - 9.0

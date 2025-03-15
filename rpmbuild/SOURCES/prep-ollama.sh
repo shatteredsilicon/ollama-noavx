@@ -4,18 +4,21 @@ set -e
 
 export GOAMD64=v2
 
-rm -rf ollama-0.5.11
-rm -f v0.5.11.tar.gz
-rm -f ollama-0.5.11-vendor.tar*
-rm -f ollama-0.5.11.tar*
+VERSION="0.6.0"
 
-wget https://github.com/ollama/ollama/archive/refs/tags/v0.5.11.tar.gz
-tar -zxvf v0.5.11.tar.gz
-tar -zcvf ollama-0.5.11.tar.gz ollama-0.5.11
+rm -f ollama-${VERSION}-vendor.tar*
+rm -f ollama-${VERSION}.tar*
 
-cp golang-version.patch ollama-0.5.11/
-pushd ollama-0.5.11
+wget https://github.com/ollama/ollama/archive/refs/tags/v${VERSION}.tar.gz
+tar -zxvf v${VERSION}.tar.gz
+tar -zcvf ollama-${VERSION}.tar.gz ollama-${VERSION}
+
+cp golang-version.patch ollama-${VERSION}/
+pushd ollama-${VERSION}
 patch -p1 < golang-version.patch
 go mod vendor
-tar -zcvf ../ollama-0.5.11-vendor.tar.gz vendor
+tar -zcvf ../ollama-${VERSION}-vendor.tar.gz vendor
 popd
+
+rm -rf ollama-${VERSION}
+rm -f v${VERSION}.tar.gz
