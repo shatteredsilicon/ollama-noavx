@@ -1,10 +1,10 @@
-diff -Nru '--exclude=.git' ollama-0.5.11.org/go.mod ollama-0.5.11/go.mod
---- ollama-0.5.11.org/go.mod	2025-02-19 01:11:03.801372138 +0700
-+++ ollama-0.5.11/go.mod	2025-02-19 02:15:20.589703883 +0700
+diff -Nru '--exclude=.git' ollama-0.6.0.org/go.mod ollama-0.6.0/go.mod
+--- ollama-0.6.0.org/go.mod	2025-03-16 01:12:17.990913811 +0700
++++ ollama-0.6.0/go.mod	2025-03-16 01:38:51.358726488 +0700
 @@ -1,6 +1,6 @@
  module github.com/ollama/ollama
  
--go 1.23.4
+-go 1.24.0
 +go 1.23.1
  
  require (

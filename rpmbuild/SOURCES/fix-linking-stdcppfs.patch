@@ -1,6 +1,6 @@
-diff -Nru '--exclude=.git' ollama-0.5.11.org/llama/llama.go ollama-0.5.11/llama/llama.go
---- ollama-0.5.11.org/llama/llama.go	2025-02-19 01:11:03.805371949 +0700
-+++ ollama-0.5.11/llama/llama.go	2025-02-19 01:27:16.297777394 +0700
+diff -Nru '--exclude=.git' ollama-0.6.0.org/llama/llama.go ollama-0.6.0/llama/llama.go
+--- ollama-0.6.0.org/llama/llama.go	2025-03-16 01:12:18.006914048 +0700
++++ ollama-0.6.0/llama/llama.go	2025-03-16 02:05:05.905418914 +0700
 @@ -3,6 +3,7 @@
  /*
  #cgo CFLAGS: -std=c11

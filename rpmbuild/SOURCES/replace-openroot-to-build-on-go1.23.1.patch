@@ -1,0 +1,35 @@
+diff -Nru '--exclude=.git' ollama-0.6.0.org/server/create.go ollama-0.6.0/server/create.go
+--- ollama-0.6.0.org/server/create.go	2025-03-16 01:12:18.090915285 +0700
++++ ollama-0.6.0/server/create.go	2025-03-16 04:32:09.411498076 +0700
+@@ -230,8 +230,8 @@
+ 		return nil, err
+ 	}
+ 	defer os.RemoveAll(tmpDir)
+-	// Set up a root to validate paths
+-	root, err := os.OpenRoot(tmpDir)
++	// Open the directory as a file
++	root, err := os.Open(tmpDir)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+@@ -241,7 +241,10 @@
+ 		if !fs.ValidPath(fp) {
+ 			return nil, fmt.Errorf("%w: %s", errFilePath, fp)
+ 		}
+-		if _, err := root.Stat(fp); err != nil && !errors.Is(err, fs.ErrNotExist) {
++
++		filePath := filepath.Join(tmpDir, fp)
++
++		if _, err := os.Stat(filePath); err != nil && !errors.Is(err, fs.ErrNotExist) {
+ 			// Path is likely outside the root
+ 			return nil, fmt.Errorf("%w: %s: %s", errFilePath, err, fp)
+ 		}
+@@ -250,7 +253,7 @@
+ 		if err != nil {
+ 			return nil, err
+ 		}
+-		if err := createLink(blobPath, filepath.Join(tmpDir, fp)); err != nil {
++		if err := createLink(blobPath, filePath); err != nil {
+ 			return nil, err
+ 		}
+ 	}
