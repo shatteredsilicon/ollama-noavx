@@ -1,7 +1,7 @@
 %define debug_package %{nil}
 
 Name:           ollama
-Version:        0.6.0
+Version:        0.6.1
 Release:        1%{?dist}
 Summary:        Tool for running AI models on-premise
 License:        MIT
@@ -102,6 +102,9 @@ cp -Ra docs/* "%{buildroot}/%{_docdir}/%{name}"
 %attr(-, ollama, ollama) %{_localstatedir}/lib/%{name}
 
 %changelog
+* Mon Mar 17 2025 <nthien86@gmail.com> - 0.6.1-1
+- 0.6.1 patched to disable AVX requirements
+
 * Sun Mar 16 2025 <nthien86@gmail.com> - 0.6.0-1
 - 0.6.0 patched to disable AVX requirements
 

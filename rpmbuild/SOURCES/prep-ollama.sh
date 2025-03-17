@@ -4,7 +4,7 @@ set -e
 
 export GOAMD64=v2
 
-VERSION="0.6.0"
+VERSION="0.6.1"
 
 rm -f ollama-${VERSION}-vendor.tar*
 rm -f ollama-${VERSION}.tar*
