@@ -1,7 +1,7 @@
 %define debug_package %{nil}
 
 Name:           ollama
-Version:        0.6.1
+Version:        0.6.2
 Release:        1%{?dist}
 Summary:        Tool for running AI models on-premise
 License:        MIT
@@ -17,10 +17,9 @@ Patch3:         optimize-gpu-compiler.patch
 Patch4:         support-all-compute-models-for-cuda11.patch
 Patch5:         enable-lto.patch
 Patch6:         golang-version.patch
-Patch7:         replace-openroot-to-build-on-go1.23.1.patch
 BuildRequires:  cmake >= 3.24
 BuildRequires:  zstd
-BuildRequires:  golang >= 1.23.1
+BuildRequires:  golang >= 1.24.0
 BuildRequires:  gcc-c++
 BuildRequires:  libstdc++
 BuildRequires:  systemd-rpm-macros
@@ -48,7 +47,6 @@ can be imported.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
-%patch7 -p1
 
 %build
 export CFLAGS='-ffunction-sections -fdata-sections -flto -Wl,--gc-sections -Wl,--strip-all'
@@ -102,6 +100,9 @@ cp -Ra docs/* "%{buildroot}/%{_docdir}/%{name}"
 %attr(-, ollama, ollama) %{_localstatedir}/lib/%{name}
 
 %changelog
+* Thu Apr 03 2025 <nthien86@gmail.com> - 0.6.2-1
+- 0.6.2 patched to disable AVX requirements
+
 * Mon Mar 17 2025 <nthien86@gmail.com> - 0.6.1-1
 - 0.6.1 patched to disable AVX requirements
 
