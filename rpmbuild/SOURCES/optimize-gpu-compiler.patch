@@ -1,6 +1,6 @@
-diff -Nru '--exclude=.git' ollama-0.6.0.org/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt ollama-0.6.0/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt
---- ollama-0.6.0.org/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt	2025-03-16 01:12:18.026914343 +0700
-+++ ollama-0.6.0/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt	2025-03-16 02:07:03.162294567 +0700
+diff -Nru '--exclude=.git' ollama-0.6.5.org/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt ollama-0.6.5/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt
+--- ollama-0.6.5.org/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt	2025-04-12 23:31:40.425749809 +0700
++++ ollama-0.6.5/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt	2025-04-13 00:41:19.292739204 +0700
 @@ -141,7 +141,7 @@
      endif()
  

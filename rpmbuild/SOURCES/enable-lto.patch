@@ -1,6 +1,6 @@
-diff -Nru '--exclude=.git' ollama-0.6.0.org/CMakeLists.txt ollama-0.6.0/CMakeLists.txt
---- ollama-0.6.0.org/CMakeLists.txt	2025-03-16 02:04:26.841112227 +0700
-+++ ollama-0.6.0/CMakeLists.txt	2025-03-16 02:27:03.907682777 +0700
+diff -Nru '--exclude=.git' ollama-0.6.5.org/CMakeLists.txt ollama-0.6.5/CMakeLists.txt
+--- ollama-0.6.5.org/CMakeLists.txt	2025-04-13 00:30:11.110238562 +0700
++++ ollama-0.6.5/CMakeLists.txt	2025-04-13 00:48:15.834929446 +0700
 @@ -24,6 +24,7 @@
  set(GGML_CUDA_PEER_MAX_BATCH_SIZE 128)
  set(GGML_CUDA_GRAPHS ON)
@@ -9,9 +9,9 @@ diff -Nru '--exclude=.git' ollama-0.6.0.org/CMakeLists.txt ollama-0.6.0/CMakeLis
  
  if((CMAKE_OSX_ARCHITECTURES AND NOT CMAKE_OSX_ARCHITECTURES MATCHES "arm64")
      OR (NOT CMAKE_OSX_ARCHITECTURES AND NOT CMAKE_SYSTEM_PROCESSOR MATCHES "arm|aarch64|ARM64|ARMv[0-9]+"))
-diff -Nru '--exclude=.git' ollama-0.6.0.org/llama/llama.go ollama-0.6.0/llama/llama.go
---- ollama-0.6.0.org/llama/llama.go	2025-03-16 02:06:01.697843452 +0700
-+++ ollama-0.6.0/llama/llama.go	2025-03-16 02:27:36.197762336 +0700
+diff -Nru '--exclude=.git' ollama-0.6.5.org/llama/llama.go ollama-0.6.5/llama/llama.go
+--- ollama-0.6.5.org/llama/llama.go	2025-04-13 00:34:10.358900065 +0700
++++ ollama-0.6.5/llama/llama.go	2025-04-13 00:48:58.255164591 +0700
 @@ -1,8 +1,8 @@
  package llama
  
