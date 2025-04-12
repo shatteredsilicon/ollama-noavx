@@ -1,6 +1,6 @@
-diff -Nru '--exclude=.git' ollama-0.6.0.org/ml/backend/ggml/ggml/src/CMakeLists.txt ollama-0.6.0/ml/backend/ggml/ggml/src/CMakeLists.txt
---- ollama-0.6.0.org/ml/backend/ggml/ggml/src/CMakeLists.txt	2025-03-16 01:12:18.018914224 +0700
-+++ ollama-0.6.0/ml/backend/ggml/ggml/src/CMakeLists.txt	2025-03-16 01:57:15.880986206 +0700
+diff -Nru '--exclude=.git' ollama-0.6.5.org/ml/backend/ggml/ggml/src/CMakeLists.txt ollama-0.6.5/ml/backend/ggml/ggml/src/CMakeLists.txt
+--- ollama-0.6.5.org/ml/backend/ggml/ggml/src/CMakeLists.txt	2025-04-12 23:31:40.425749809 +0700
++++ ollama-0.6.5/ml/backend/ggml/ggml/src/CMakeLists.txt	2025-04-13 00:00:08.285309787 +0700
 @@ -307,11 +307,12 @@
          message(FATAL_ERROR "GGML_CPU_ALL_VARIANTS requires GGML_BACKEND_DL")
      endif()

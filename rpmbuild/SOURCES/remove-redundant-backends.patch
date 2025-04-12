@@ -1,6 +1,6 @@
-diff -Nru '--exclude=.git' ollama-0.6.0.org/CMakeLists.txt ollama-0.6.0/CMakeLists.txt
---- ollama-0.6.0.org/CMakeLists.txt	2025-03-16 01:12:17.970913516 +0700
-+++ ollama-0.6.0/CMakeLists.txt	2025-03-16 02:00:23.534982479 +0700
+diff -Nru '--exclude=.git' ollama-0.6.5.org/CMakeLists.txt ollama-0.6.5/CMakeLists.txt
+--- ollama-0.6.5.org/CMakeLists.txt	2025-04-12 23:31:40.417749849 +0700
++++ ollama-0.6.5/CMakeLists.txt	2025-04-13 00:05:36.292734650 +0700
 @@ -84,6 +84,8 @@
          RUNTIME DESTINATION ${OLLAMA_CUDA_INSTALL_DIR} COMPONENT CUDA
          LIBRARY DESTINATION ${OLLAMA_CUDA_INSTALL_DIR} COMPONENT CUDA
@@ -9,10 +9,10 @@ diff -Nru '--exclude=.git' ollama-0.6.0.org/CMakeLists.txt ollama-0.6.0/CMakeLis
 +    message(FATAL_ERROR "CUDA compiler not found! Ensure CUDA is installed.")
  endif()
  
- set(WINDOWS_AMDGPU_TARGETS_EXCLUDE_REGEX "^gfx(906|908|90a):xnack[+-]$"
-diff -Nru '--exclude=.git' ollama-0.6.0.org/ml/backend/ggml/ggml/src/CMakeLists.txt ollama-0.6.0/ml/backend/ggml/ggml/src/CMakeLists.txt
---- ollama-0.6.0.org/ml/backend/ggml/ggml/src/CMakeLists.txt	2025-03-16 02:02:08.903956798 +0700
-+++ ollama-0.6.0/ml/backend/ggml/ggml/src/CMakeLists.txt	2025-03-16 02:02:20.396057864 +0700
+ set(WINDOWS_AMDGPU_TARGETS_EXCLUDE_REGEX "^gfx(906|908|90a|1200|1201):xnack[+-]$"
+diff -Nru '--exclude=.git' ollama-0.6.5.org/ml/backend/ggml/ggml/src/CMakeLists.txt ollama-0.6.5/ml/backend/ggml/ggml/src/CMakeLists.txt
+--- ollama-0.6.5.org/ml/backend/ggml/ggml/src/CMakeLists.txt	2025-04-13 00:03:05.307223731 +0700
++++ ollama-0.6.5/ml/backend/ggml/ggml/src/CMakeLists.txt	2025-04-13 00:03:57.159753417 +0700
 @@ -317,17 +317,17 @@
      ggml_add_cpu_backend_variant_impl("")
  endif()

@@ -1,6 +1,6 @@
-diff -Nru '--exclude=.git' ollama-0.6.0.org/CMakePresets.json ollama-0.6.0/CMakePresets.json
---- ollama-0.6.0.org/CMakePresets.json	2025-03-16 01:12:17.970913516 +0700
-+++ ollama-0.6.0/CMakePresets.json	2025-03-16 02:11:33.212115187 +0700
+diff -Nru '--exclude=.git' ollama-0.6.5.org/CMakePresets.json ollama-0.6.5/CMakePresets.json
+--- ollama-0.6.5.org/CMakePresets.json	2025-04-12 23:31:40.417749849 +0700
++++ ollama-0.6.5/CMakePresets.json	2025-04-13 00:45:10.253922974 +0700
 @@ -21,7 +21,7 @@
        "name": "CUDA 11",
        "inherits": [ "CUDA" ],
@@ -10,9 +10,9 @@ diff -Nru '--exclude=.git' ollama-0.6.0.org/CMakePresets.json ollama-0.6.0/CMake
        }
      },
      {
-diff -Nru '--exclude=.git' ollama-0.6.0.org/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt ollama-0.6.0/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt
---- ollama-0.6.0.org/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt	2025-03-16 02:09:07.743163305 +0700
-+++ ollama-0.6.0/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt	2025-03-16 02:13:29.552838809 +0700
+diff -Nru '--exclude=.git' ollama-0.6.5.org/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt ollama-0.6.5/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt
+--- ollama-0.6.5.org/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt	2025-04-13 00:43:29.341394540 +0700
++++ ollama-0.6.5/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt	2025-04-13 00:45:43.906102439 +0700
 @@ -100,7 +100,7 @@
  
      set(CUDA_CXX_FLAGS "")
