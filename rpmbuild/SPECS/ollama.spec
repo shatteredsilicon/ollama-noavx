@@ -10,7 +10,7 @@ Source:         %{name}-%{version}.tar.gz
 Source1:        %{name}-%{version}-vendor.tar.gz
 Source2:        %{name}.service
 Source3:        %{name}-user.conf
-#Patch0:         ollama-disable-avx.patch
+Patch0:         ollama-disable-avx.patch
 Patch1:         remove-redundant-backends.patch
 Patch2:         fix-linking-stdcppfs.patch
 Patch3:         optimize-gpu-compiler.patch
@@ -39,7 +39,7 @@ can be imported.
 %setup
 %setup -D -a 1
 
-#%patch0 -p1
+%patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
