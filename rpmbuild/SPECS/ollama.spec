@@ -1,7 +1,7 @@
 %define debug_package %{nil}
 
 Name:           ollama
-Version:        0.6.5
+Version:        0.6.8
 Release:        1%{?dist}
 Summary:        Tool for running AI models on-premise
 License:        MIT
@@ -10,7 +10,7 @@ Source:         %{name}-%{version}.tar.gz
 Source1:        %{name}-%{version}-vendor.tar.gz
 Source2:        %{name}.service
 Source3:        %{name}-user.conf
-Patch0:         ollama-disable-avx.patch
+#Patch0:         ollama-disable-avx.patch
 Patch1:         remove-redundant-backends.patch
 Patch2:         fix-linking-stdcppfs.patch
 Patch3:         optimize-gpu-compiler.patch
@@ -39,7 +39,7 @@ can be imported.
 %setup
 %setup -D -a 1
 
-%patch0 -p1
+#%patch0 -p1
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
@@ -98,6 +98,12 @@ cp -Ra docs/* "%{buildroot}/%{_docdir}/%{name}"
 %attr(-, ollama, ollama) %{_localstatedir}/lib/%{name}
 
 %changelog
+* Sat May 10 2025 <gordan@shatteredsilicon.net> - 0.6.8-1
+- Update to 0.6.8
+
+* Sun Apr 27 2025 <gordan@shatteredsilicon.net> - 0.6.6-1
+- Update to 0.6.6
+
 * Sat Apr 12 2025 <nthien86@gmail.com> - 0.6.5-1
 - 0.6.5 patched to disable AVX requirements
 
