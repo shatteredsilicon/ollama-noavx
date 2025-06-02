@@ -1,5 +1,18 @@
---- ollama-0.9.0/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt.orig	2025-06-02 18:34:55.211368258 +0300
-+++ ollama-0.9.0/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt	2025-06-02 18:35:33.018304693 +0300
+diff -ruN ollama-0.9.0.orig/CMakePresets.json ollama-0.9.0/CMakePresets.json
+--- ollama-0.9.0.orig/CMakePresets.json	2025-05-29 05:38:52.000000000 +0300
++++ ollama-0.9.0/CMakePresets.json	2025-06-02 19:35:48.346216393 +0300
+@@ -21,7 +21,7 @@
+       "name": "CUDA 11",
+       "inherits": [ "CUDA" ],
+       "cacheVariables": {
+-        "CMAKE_CUDA_ARCHITECTURES": "50;52;53;60;61;70;75;80;86",
++        "CMAKE_CUDA_ARCHITECTURES": "35;37;50;52;53;60;61;62;70;72;75;80;86;87;89;90",
+         "CMAKE_CUDA_FLAGS": "-Wno-deprecated-gpu-targets"
+       }
+     },
+diff -ruN ollama-0.9.0.orig/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt ollama-0.9.0/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt
+--- ollama-0.9.0.orig/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt	2025-05-29 05:38:52.000000000 +0300
++++ ollama-0.9.0/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt	2025-06-02 19:36:23.490952535 +0300
 @@ -118,7 +118,7 @@
  
      set(CUDA_CXX_FLAGS "")
