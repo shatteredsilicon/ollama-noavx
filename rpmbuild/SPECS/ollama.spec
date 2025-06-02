@@ -1,7 +1,7 @@
 %define debug_package %{nil}
 
 Name:           ollama
-Version:        0.6.8
+Version:        0.9.0
 Release:        1%{?dist}
 Summary:        Tool for running AI models on-premise
 License:        MIT
@@ -98,6 +98,9 @@ cp -Ra docs/* "%{buildroot}/%{_docdir}/%{name}"
 %attr(-, ollama, ollama) %{_localstatedir}/lib/%{name}
 
 %changelog
+* Mon Jun 02 2025 <gordan@shatteredsilicon.net> - 0.9.0-1
+- Update to 0.9.0
+
 * Sat May 10 2025 <gordan@shatteredsilicon.net> - 0.6.8-1
 - Update to 0.6.8
 

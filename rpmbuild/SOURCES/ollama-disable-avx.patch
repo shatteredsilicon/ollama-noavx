@@ -1,23 +1,19 @@
-diff -Nru '--exclude=.git' ollama-0.6.8.org/ml/backend/ggml/ggml/src/CMakeLists.txt ollama-0.6.8/ml/backend/ggml/ggml/src/CMakeLists.txt
---- ollama-0.6.8.org/ml/backend/ggml/ggml/src/CMakeLists.txt	2025-05-11 02:46:57.267978491 +0700
-+++ ollama-0.6.8/ml/backend/ggml/ggml/src/CMakeLists.txt	2025-05-11 03:41:37.150894265 +0700
-@@ -289,13 +289,13 @@
-         message(FATAL_ERROR "GGML_CPU_ALL_VARIANTS requires GGML_BACKEND_DL")
-     endif()
+--- ollama-0.9.0/ml/backend/ggml/ggml/src/CMakeLists.txt.orig	2025-06-02 18:58:04.906495383 +0300
++++ ollama-0.9.0/ml/backend/ggml/ggml/src/CMakeLists.txt	2025-06-02 18:58:36.609196479 +0300
+@@ -291,11 +291,11 @@
      add_custom_target(ggml-cpu)
--    ggml_add_cpu_backend_variant(x64)
-+    # ggml_add_cpu_backend_variant(x64)
+     ggml_add_cpu_backend_variant(x64)
      ggml_add_cpu_backend_variant(sse42        SSE42)
 -    ggml_add_cpu_backend_variant(sandybridge  SSE42 AVX)
 -    ggml_add_cpu_backend_variant(haswell      SSE42 AVX F16C AVX2 BMI2 FMA)
 -    ggml_add_cpu_backend_variant(skylakex     SSE42 AVX F16C AVX2 BMI2 FMA AVX512)
 -    ggml_add_cpu_backend_variant(icelake      SSE42 AVX F16C AVX2 BMI2 FMA AVX512 AVX512_VBMI AVX512_VNNI)
 -    ggml_add_cpu_backend_variant(alderlake    SSE42 AVX F16C AVX2 BMI2 FMA AVX_VNNI)
-+    # ggml_add_cpu_backend_variant(sandybridge  SSE42 AVX)
-+    # ggml_add_cpu_backend_variant(haswell      SSE42 AVX F16C AVX2 BMI2 FMA)
-+    # ggml_add_cpu_backend_variant(skylakex     SSE42 AVX F16C AVX2 BMI2 FMA AVX512)
-+    # ggml_add_cpu_backend_variant(icelake      SSE42 AVX F16C AVX2 BMI2 FMA AVX512 AVX512_VBMI AVX512_VNNI)
-+    # ggml_add_cpu_backend_variant(alderlake    SSE42 AVX F16C AVX2 BMI2 FMA AVX_VNNI)
++#    ggml_add_cpu_backend_variant(sandybridge  SSE42 AVX)
++#    ggml_add_cpu_backend_variant(haswell      SSE42 AVX F16C AVX2 BMI2 FMA)
++#    ggml_add_cpu_backend_variant(skylakex     SSE42 AVX F16C AVX2 BMI2 FMA AVX512)
++#    ggml_add_cpu_backend_variant(icelake      SSE42 AVX F16C AVX2 BMI2 FMA AVX512 AVX512_VBMI AVX512_VNNI)
++#    ggml_add_cpu_backend_variant(alderlake    SSE42 AVX F16C AVX2 BMI2 FMA AVX_VNNI)
  elseif (GGML_CPU)
      ggml_add_cpu_backend_variant_impl("")
  endif()

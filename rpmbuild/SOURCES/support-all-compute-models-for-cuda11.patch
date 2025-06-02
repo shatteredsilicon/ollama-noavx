@@ -1,24 +1,11 @@
-diff -Nru '--exclude=.git' ollama-0.6.8.org/CMakePresets.json ollama-0.6.8/CMakePresets.json
---- ollama-0.6.8.org/CMakePresets.json	2025-05-11 02:46:57.259978480 +0700
-+++ ollama-0.6.8/CMakePresets.json	2025-05-11 04:14:32.149714230 +0700
-@@ -21,7 +21,7 @@
-       "name": "CUDA 11",
-       "inherits": [ "CUDA" ],
-       "cacheVariables": {
--        "CMAKE_CUDA_ARCHITECTURES": "50;52;53;60;61;70;75;80;86",
-+        "CMAKE_CUDA_ARCHITECTURES": "35;37;50;52;53;60;61;62;70;72;75;80;86;87;89;90",
-         "CMAKE_CUDA_FLAGS": "-Wno-deprecated-gpu-targets"
-       }
-     },
-diff -Nru '--exclude=.git' ollama-0.6.8.org/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt ollama-0.6.8/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt
---- ollama-0.6.8.org/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt	2025-05-11 04:13:29.307184491 +0700
-+++ ollama-0.6.8/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt	2025-05-11 04:15:33.275957404 +0700
-@@ -100,7 +100,7 @@
+--- ollama-0.9.0/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt.orig	2025-06-02 18:34:55.211368258 +0300
++++ ollama-0.9.0/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt	2025-06-02 18:35:33.018304693 +0300
+@@ -118,7 +118,7 @@
  
      set(CUDA_CXX_FLAGS "")
  
--    set(CUDA_FLAGS -use_fast_math)
-+    set(CUDA_FLAGS -use_fast_math -Wno-deprecated-gpu-targets)
+-    set(CUDA_FLAGS -use_fast_math -extended-lambda)
++    set(CUDA_FLAGS -use_fast_math -extended-lambda -Wno-deprecated-gpu-targets)
  
      if (CUDAToolkit_VERSION VERSION_GREATER_EQUAL "12.8")
          # Options are:
