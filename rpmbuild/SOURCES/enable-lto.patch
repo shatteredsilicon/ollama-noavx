@@ -1,7 +1,7 @@
-diff -Nru '--exclude=.git' ollama-0.6.8.org/CMakeLists.txt ollama-0.6.8/CMakeLists.txt
---- ollama-0.6.8.org/CMakeLists.txt	2025-05-11 04:20:11.564065490 +0700
-+++ ollama-0.6.8/CMakeLists.txt	2025-05-11 04:21:12.301481463 +0700
-@@ -24,6 +24,7 @@
+diff -Nru '--exclude=.git' ollama-0.12.10.org/CMakeLists.txt ollama-0.12.10/CMakeLists.txt
+--- ollama-0.12.10.org/CMakeLists.txt	2025-11-11 04:27:15.024381276 +0700
++++ ollama-0.12.10/CMakeLists.txt	2025-11-11 04:59:08.385907291 +0700
+@@ -25,6 +25,7 @@
  set(GGML_CUDA_PEER_MAX_BATCH_SIZE 128)
  set(GGML_CUDA_GRAPHS ON)
  set(GGML_CUDA_FA ON)
@@ -9,16 +9,17 @@ diff -Nru '--exclude=.git' ollama-0.6.8.org/CMakeLists.txt ollama-0.6.8/CMakeLis
  set(GGML_CUDA_COMPRESSION_MODE default)
  
  if((CMAKE_OSX_ARCHITECTURES AND NOT CMAKE_OSX_ARCHITECTURES MATCHES "arm64")
-diff -Nru '--exclude=.git' ollama-0.6.8.org/llama/llama.go ollama-0.6.8/llama/llama.go
---- ollama-0.6.8.org/llama/llama.go	2025-05-11 04:20:22.848336417 +0700
-+++ ollama-0.6.8/llama/llama.go	2025-05-11 04:21:57.134463991 +0700
-@@ -1,8 +1,8 @@
+diff -Nru '--exclude=.git' ollama-0.12.10.org/llama/llama.go ollama-0.12.10/llama/llama.go
+--- ollama-0.12.10.org/llama/llama.go	2025-11-11 04:34:47.096584436 +0700
++++ ollama-0.12.10/llama/llama.go	2025-11-11 05:00:20.466492710 +0700
+@@ -1,9 +1,9 @@
  package llama
  
  /*
 -#cgo CFLAGS: -std=c11
--#cgo CXXFLAGS: -std=c++17
 +#cgo CFLAGS: -O3 -flto -std=c11
+ #cgo windows CFLAGS: -Wno-dll-attribute-on-redeclaration
+-#cgo CXXFLAGS: -std=c++17
 +#cgo CXXFLAGS: -O3 -flto -std=c++17
  #cgo LDFLAGS: -lstdc++fs
  #cgo CPPFLAGS: -I${SRCDIR}/llama.cpp/include

@@ -3,7 +3,7 @@
 %bcond_without avx
 
 Name:           ollama
-Version:        0.12.2
+Version:        0.12.10
 Release:        1%{?dist}
 Summary:        Tool for running AI models on-premise
 License:        MIT
@@ -42,6 +42,8 @@ can be imported.
 %setup
 %setup -D -a 1
 
+%patch1 -p1
+
 %if %{with avx}
 # default: AVX/AVX2 allowed -> only disable AVX512
 %patch0 -p1
@@ -50,7 +52,6 @@ can be imported.
 %patch6 -p1
 %endif
 
-%patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
@@ -111,6 +112,10 @@ cp -Ra docs/* "%{buildroot}/%{_docdir}/%{name}"
 %attr(-, ollama, ollama) %{_localstatedir}/lib/%{name}
 
 %changelog
+* Tue Nov 11 2025 Thien Nguyen <nthien86@gmail.com> - 0.12.10-1
+- Update to version 0.12.10
+- Add support for building with or without AVX
+
 * Fri Sep 26 2025 <gordan@shatteredsilicon.net> - 0.12.2-1
 - Update to 0.12.2
 

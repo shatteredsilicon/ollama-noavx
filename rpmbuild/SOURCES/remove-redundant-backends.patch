@@ -1,13 +1,14 @@
---- ollama-0.11.5/ml/backend/ggml/ggml/src/CMakeLists.txt.orig	2025-08-20 22:53:42.306017032 +0300
-+++ ollama-0.11.5/ml/backend/ggml/ggml/src/CMakeLists.txt	2025-08-20 22:56:11.908732967 +0300
-@@ -367,17 +367,17 @@
+diff -Nru '--exclude=.git' ollama-0.12.10.org/ml/backend/ggml/ggml/src/CMakeLists.txt ollama-0.12.10/ml/backend/ggml/ggml/src/CMakeLists.txt
+--- ollama-0.12.10.org/ml/backend/ggml/ggml/src/CMakeLists.txt	2025-11-11 04:29:18.867032426 +0700
++++ ollama-0.12.10/ml/backend/ggml/ggml/src/CMakeLists.txt	2025-11-11 04:38:06.523940466 +0700
+@@ -379,18 +379,18 @@
      ggml_add_cpu_backend_variant_impl("")
  endif()
  
 -ggml_add_backend(BLAS)
 -ggml_add_backend(CANN)
-+#ggml_add_backend(BLAS)
-+#ggml_add_backend(CANN)
++# ggml_add_backend(BLAS)
++# ggml_add_backend(CANN)
  ggml_add_backend(CUDA)
 -ggml_add_backend(HIP)
 -ggml_add_backend(METAL)
@@ -16,15 +17,17 @@
 -ggml_add_backend(SYCL)
 -ggml_add_backend(Vulkan)
 -ggml_add_backend(WebGPU)
+-ggml_add_backend(zDNN)
 -ggml_add_backend(OpenCL)
-+#ggml_add_backend(HIP)
-+#ggml_add_backend(METAL)
-+#ggml_add_backend(MUSA)
-+#ggml_add_backend(RPC)
-+#ggml_add_backend(SYCL)
-+#ggml_add_backend(Vulkan)
-+#ggml_add_backend(WebGPU)
-+#ggml_add_backend(OpenCL)
++# ggml_add_backend(HIP)
++# ggml_add_backend(METAL)
++# ggml_add_backend(MUSA)
++# ggml_add_backend(RPC)
++# ggml_add_backend(SYCL)
++# ggml_add_backend(Vulkan)
++# ggml_add_backend(WebGPU)
++# ggml_add_backend(zDNN)
++# ggml_add_backend(OpenCL)
  
  foreach (target ggml-base ggml)
      target_include_directories(${target} PUBLIC    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include> $<INSTALL_INTERFACE:include>)

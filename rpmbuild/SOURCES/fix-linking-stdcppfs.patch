@@ -1,5 +1,6 @@
---- ollama-0.9.0/llama//llama.go.orig	2025-06-02 18:32:21.383634946 +0300
-+++ ollama-0.9.0/llama//llama.go	2025-06-02 18:32:44.311123567 +0300
+diff -Nru '--exclude=.git' ollama-0.12.10.org/llama/llama.go ollama-0.12.10/llama/llama.go
+--- ollama-0.12.10.org/llama/llama.go	2025-11-11 04:27:15.116380231 +0700
++++ ollama-0.12.10/llama/llama.go	2025-11-11 04:21:05.213281053 +0700
 @@ -4,6 +4,7 @@
  #cgo CFLAGS: -std=c11
  #cgo windows CFLAGS: -Wno-dll-attribute-on-redeclaration
@@ -7,4 +8,4 @@
 +#cgo LDFLAGS: -lstdc++fs
  #cgo CPPFLAGS: -I${SRCDIR}/llama.cpp/include
  #cgo CPPFLAGS: -I${SRCDIR}/llama.cpp/common
- #cgo CPPFLAGS: -I${SRCDIR}/llama.cpp/tools/mtmd
+ #cgo CPPFLAGS: -I${SRCDIR}/llama.cpp/vendor
