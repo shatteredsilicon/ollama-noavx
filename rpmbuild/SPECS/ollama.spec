@@ -21,7 +21,7 @@ Patch5:         enable-lto.patch
 Patch6:         ollama-disable-avx.patch
 BuildRequires:  cmake >= 3.24
 BuildRequires:  zstd
-BuildRequires:  golang >= 1.24.0
+BuildRequires:  golang >= 1.24.1
 BuildRequires:  gcc-c++
 BuildRequires:  libstdc++
 BuildRequires:  systemd-rpm-macros
