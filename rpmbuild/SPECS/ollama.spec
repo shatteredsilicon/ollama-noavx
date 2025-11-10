@@ -1,5 +1,7 @@
 %define debug_package %{nil}
 
+%bcond_without avx
+
 Name:           ollama
 Version:        0.12.2
 Release:        1%{?dist}
@@ -16,6 +18,7 @@ Patch2:         fix-linking-stdcppfs.patch
 Patch3:         optimize-gpu-compiler.patch
 Patch4:         support-all-compute-models-for-cuda12.patch
 Patch5:         enable-lto.patch
+Patch6:         ollama-disable-avx.patch
 BuildRequires:  cmake >= 3.24
 BuildRequires:  zstd
 BuildRequires:  golang >= 1.24.0
@@ -39,7 +42,14 @@ can be imported.
 %setup
 %setup -D -a 1
 
+%if %{with avx}
+# default: AVX/AVX2 allowed -> only disable AVX512
 %patch0 -p1
+%else
+# --without avx: no AVX at all
+%patch6 -p1
+%endif
+
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
@@ -53,8 +63,11 @@ export LDFLAGS='-flto -Wl,--gc-sections -Wl,--strip-all -lstdc++fs'
 export PATH=/usr/local/cuda-12/bin:$PATH
 export GIN_MODE=release
 export GOFLAGS="-mod=vendor -ldflags=-s -ldflags=-w -buildvcs=false"
-#export GOAMD64=v2
 export CGO_ENABLED=1
+
+%if !%{with avx}
+export GOAMD64=v2
+%endif
 
 cmake --preset="CUDA 12"
 cmake --build build --config Release %{?_smp_mflags}
