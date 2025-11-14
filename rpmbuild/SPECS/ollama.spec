@@ -19,6 +19,7 @@ Patch3:         optimize-gpu-compiler.patch
 Patch4:         support-all-compute-models-for-cuda12.patch
 Patch5:         enable-lto.patch
 Patch6:         ollama-disable-avx.patch
+Patch7:         support-overriding-tensor-split.patch
 BuildRequires:  cmake >= 3.24
 BuildRequires:  zstd
 BuildRequires:  golang >= 1.24.1
@@ -56,6 +57,7 @@ can be imported.
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch7 -p1
 
 %build
 export CFLAGS='-ffunction-sections -fdata-sections -flto -Wl,--gc-sections -Wl,--strip-all'
