@@ -72,6 +72,9 @@ export CGO_ENABLED=1
 export GOAMD64=v2
 %endif
 
+# Run unit tests prior to building binaries to catch regressions early
+GIN_MODE=test go test -v ./...
+
 cmake --preset="CUDA 12"
 cmake --build build --config Release %{?_smp_mflags}
 go build -v .
