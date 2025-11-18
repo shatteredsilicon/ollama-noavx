@@ -3,7 +3,7 @@
 %bcond_without avx
 
 Name:           ollama
-Version:        0.12.10
+Version:        0.12.11
 Release:        1%{?dist}
 Summary:        Tool for running AI models on-premise
 License:        MIT
@@ -117,9 +117,10 @@ cp -Ra docs/* "%{buildroot}/%{_docdir}/%{name}"
 %attr(-, ollama, ollama) %{_localstatedir}/lib/%{name}
 
 %changelog
-* Tue Nov 11 2025 Thien Nguyen <nthien86@gmail.com> - 0.12.10-1
-- Update to version 0.12.10
+* Wed Nov 19 2025 Thien Nguyen <nthien86@gmail.com> - 0.12.11-1
+- Update to version 0.12.11
 - Add support for building with or without AVX
+- Support overriding tensor-split
 
 * Fri Sep 26 2025 <gordan@shatteredsilicon.net> - 0.12.2-1
 - Update to 0.12.2
