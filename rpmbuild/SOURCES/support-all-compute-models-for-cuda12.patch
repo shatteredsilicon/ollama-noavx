@@ -1,0 +1,12 @@
+diff -Nru '--exclude=.git' ollama-0.12.10.org/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt ollama-0.12.10/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt
+--- ollama-0.12.10.org/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt	2025-11-11 04:55:55.044139213 +0700
++++ ollama-0.12.10/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt	2025-11-11 04:56:27.164456123 +0700
+@@ -120,7 +120,7 @@
+ 
+     set(CUDA_CXX_FLAGS "")
+ 
+-    set(CUDA_FLAGS -use_fast_math -extended-lambda)
++    set(CUDA_FLAGS -use_fast_math -extended-lambda -Wno-deprecated-gpu-targets)
+ 
+     if (GGML_CUDA_DEBUG)
+         list(APPEND CUDA_FLAGS -lineinfo)

@@ -1,7 +1,9 @@
 %define debug_package %{nil}
 
+%bcond_without avx
+
 Name:           ollama
-Version:        0.9.0
+Version:        0.12.11
 Release:        1%{?dist}
 Summary:        Tool for running AI models on-premise
 License:        MIT
@@ -10,19 +12,21 @@ Source:         %{name}-%{version}.tar.gz
 Source1:        %{name}-%{version}-vendor.tar.gz
 Source2:        %{name}.service
 Source3:        %{name}-user.conf
-Patch0:         ollama-disable-avx.patch
+Patch0:         ollama-disable-avx512.patch
 Patch1:         remove-redundant-backends.patch
 Patch2:         fix-linking-stdcppfs.patch
 Patch3:         optimize-gpu-compiler.patch
-Patch4:         support-all-compute-models-for-cuda11.patch
+Patch4:         support-all-compute-models-for-cuda12.patch
 Patch5:         enable-lto.patch
+Patch6:         ollama-disable-avx.patch
+Patch7:         support-overriding-tensor-split.patch
 BuildRequires:  cmake >= 3.24
 BuildRequires:  zstd
-BuildRequires:  golang >= 1.24.0
+BuildRequires:  golang >= 1.24.1
 BuildRequires:  gcc-c++
 BuildRequires:  libstdc++
 BuildRequires:  systemd-rpm-macros
-BuildRequires:  cuda-toolkit-11-8
+BuildRequires:  cuda-toolkit-12-9
 %{?sysusers_requires_compat}
 
 Requires: nvidia-driver-cuda-libs libcublas cuda-cudart
@@ -39,24 +43,39 @@ can be imported.
 %setup
 %setup -D -a 1
 
-%patch0 -p1
 %patch1 -p1
+
+%if %{with avx}
+# default: AVX/AVX2 allowed -> only disable AVX512
+%patch0 -p1
+%else
+# --without avx: no AVX at all
+%patch6 -p1
+%endif
+
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
+%patch7 -p1
 
 %build
 export CFLAGS='-ffunction-sections -fdata-sections -flto -Wl,--gc-sections -Wl,--strip-all'
 export CXXFLAGS=$CFLAGS
 export LDFLAGS='-flto -Wl,--gc-sections -Wl,--strip-all -lstdc++fs'
-export PATH=/usr/local/cuda-11/bin:$PATH
+export PATH=/usr/local/cuda-12/bin:$PATH
 export GIN_MODE=release
 export GOFLAGS="-mod=vendor -ldflags=-s -ldflags=-w -buildvcs=false"
-export GOAMD64=v2
 export CGO_ENABLED=1
 
-cmake --preset="CUDA 11"
+%if !%{with avx}
+export GOAMD64=v2
+%endif
+
+# Run unit tests prior to building binaries to catch regressions early
+GIN_MODE=test go test -v ./...
+
+cmake --preset="CUDA 12"
 cmake --build build --config Release %{?_smp_mflags}
 go build -v .
 strip %{name}
@@ -98,8 +117,49 @@ cp -Ra docs/* "%{buildroot}/%{_docdir}/%{name}"
 %attr(-, ollama, ollama) %{_localstatedir}/lib/%{name}
 
 %changelog
-* Mon Jun 02 2025 <gordan@shatteredsilicon.net> - 0.9.0-1
-- Update to 0.9.0
+* Wed Nov 19 2025 Thien Nguyen <nthien86@gmail.com> - 0.12.11-1
+- Update to version 0.12.11
+- Add support for building with or without AVX
+- Support overriding tensor-split
+
+* Fri Sep 26 2025 <gordan@shatteredsilicon.net> - 0.12.2-1
+- Update to 0.12.2
+
+* Thu Sep 11 2025 <gordan@shatteredsilicon.net> - 0.11.10-1
+- Update to 0.11.10
+
+* Tue Aug 26 2025 <gordan@shatteredsilicon.net> - 0.11.7-1
+- Update to 0.11.7
+
+* Fri Aug 22 2025 <gordan@shatteredsilicon.net> - 0.11.6-1
+- Update to 0.11.6
+
+* Wed Aug 20 2025 <gordan@shatteredsilicon.net> - 0.11.5-1
+- Update to 0.11.5
+
+* Sun Aug 10 2025 <gordan@shatteredsilicon.net> - 0.11.4-1
+- Update to 0.11.4
+
+* Wed Aug 06 2025 <gordan@shatteredsilicon.net> - 0.11.3-1
+- Update to 0.11.3
+
+* Tue Aug 05 2025 <gordan@shatteredsilicon.net> - 0.11.0-1
+- Update to 0.11.0
+
+* Thu Jul 31 2025 <gordan@shatteredsilicon.net> - 0.10.1-1
+- Update to 0.10.1
+
+* Wed Jul 09 2025 <gordan@shatteredsilicon.net> - 0.9.6-1
+- Update to 0.9.6
+
+* Sun Jul 06 2025 <gordan@shatteredsilicon.net> - 0.9.5-1
+- Update to 0.9.5
+
+* Fri Jun 20 2025 <gordan@shatteredsilicon.net> - 0.9.2-1
+- Update to 0.9.2
+
+* Wed Jun 18 2025 <gordan@shatteredsilicon.net> - 0.9.1-1
+- Update to 0.9.1
 
 * Sat May 10 2025 <gordan@shatteredsilicon.net> - 0.6.8-1
 - Update to 0.6.8

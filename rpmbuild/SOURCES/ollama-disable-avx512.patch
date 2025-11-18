@@ -1,17 +1,13 @@
 diff -Nru '--exclude=.git' ollama-0.12.11.org/ml/backend/ggml/ggml/src/CMakeLists.txt ollama-0.12.11/ml/backend/ggml/ggml/src/CMakeLists.txt
 --- ollama-0.12.11.org/ml/backend/ggml/ggml/src/CMakeLists.txt	2025-11-19 01:05:49.530241457 +0700
-+++ ollama-0.12.11/ml/backend/ggml/ggml/src/CMakeLists.txt	2025-11-19 01:06:54.862955599 +0700
-@@ -332,11 +332,11 @@
-     if (GGML_SYSTEM_ARCH STREQUAL "x86")
-         ggml_add_cpu_backend_variant(x64)
++++ ollama-0.12.11/ml/backend/ggml/ggml/src/CMakeLists.txt	2025-11-19 01:06:11.946492519 +0700
+@@ -334,9 +334,9 @@
          ggml_add_cpu_backend_variant(sse42        SSE42)
--        ggml_add_cpu_backend_variant(sandybridge  SSE42 AVX)
--        ggml_add_cpu_backend_variant(haswell      SSE42 AVX F16C AVX2 BMI2 FMA)
+         ggml_add_cpu_backend_variant(sandybridge  SSE42 AVX)
+         ggml_add_cpu_backend_variant(haswell      SSE42 AVX F16C AVX2 BMI2 FMA)
 -        ggml_add_cpu_backend_variant(skylakex     SSE42 AVX F16C AVX2 BMI2 FMA AVX512)
 -        ggml_add_cpu_backend_variant(icelake      SSE42 AVX F16C AVX2 BMI2 FMA AVX512 AVX512_VBMI AVX512_VNNI)
 -        ggml_add_cpu_backend_variant(alderlake    SSE42 AVX F16C AVX2 BMI2 FMA AVX_VNNI)
-+        # ggml_add_cpu_backend_variant(sandybridge  SSE42 AVX)
-+        # ggml_add_cpu_backend_variant(haswell      SSE42 AVX F16C AVX2 BMI2 FMA)
 +        # ggml_add_cpu_backend_variant(skylakex     SSE42 AVX F16C AVX2 BMI2 FMA AVX512)
 +        # ggml_add_cpu_backend_variant(icelake      SSE42 AVX F16C AVX2 BMI2 FMA AVX512 AVX512_VBMI AVX512_VNNI)
 +        # ggml_add_cpu_backend_variant(alderlake    SSE42 AVX F16C AVX2 BMI2 FMA AVX_VNNI)
