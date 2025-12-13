@@ -1,7 +1,7 @@
-diff -Nru '--exclude=.git' ollama-0.12.11.org/ml/backend/ggml/ggml/src/CMakeLists.txt ollama-0.12.11/ml/backend/ggml/ggml/src/CMakeLists.txt
---- ollama-0.12.11.org/ml/backend/ggml/ggml/src/CMakeLists.txt	2025-11-19 01:04:07.069004332 +0700
-+++ ollama-0.12.11/ml/backend/ggml/ggml/src/CMakeLists.txt	2025-11-19 01:04:47.293508516 +0700
-@@ -391,19 +391,19 @@
+diff -Nru '--exclude=.git' ollama-0.13.3.org/ml/backend/ggml/ggml/src/CMakeLists.txt ollama-0.13.3/ml/backend/ggml/ggml/src/CMakeLists.txt
+--- ollama-0.13.3.org/ml/backend/ggml/ggml/src/CMakeLists.txt	2025-11-19 01:04:07.069004332 +0700
++++ ollama-0.13.3/ml/backend/ggml/ggml/src/CMakeLists.txt	2025-11-19 01:04:47.293508516 +0700
+@@ -428,20 +428,20 @@
      ggml_add_cpu_backend_variant_impl("")
  endif()
  
@@ -20,6 +20,7 @@ diff -Nru '--exclude=.git' ollama-0.12.11.org/ml/backend/ggml/ggml/src/CMakeList
 -ggml_add_backend(zDNN)
 -ggml_add_backend(OpenCL)
 -ggml_add_backend(Hexagon)
+-ggml_add_backend(ZenDNN)
 +# ggml_add_backend(HIP)
 +# ggml_add_backend(METAL)
 +# ggml_add_backend(MUSA)
@@ -30,6 +31,7 @@ diff -Nru '--exclude=.git' ollama-0.12.11.org/ml/backend/ggml/ggml/src/CMakeList
 +# ggml_add_backend(zDNN)
 +# ggml_add_backend(OpenCL)
 +# ggml_add_backend(Hexagon)
++# ggml_add_backend(ZenDNN)
  
  foreach (target ggml-base ggml)
      target_include_directories(${target} PUBLIC    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include> $<INSTALL_INTERFACE:include>)

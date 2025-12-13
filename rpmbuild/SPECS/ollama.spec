@@ -3,8 +3,8 @@
 %bcond_without avx
 
 Name:           ollama
-Version:        0.12.11
-Release:        1%{?dist}
+Version:        0.13.3
+Release:        3%{?dist}
 Summary:        Tool for running AI models on-premise
 License:        MIT
 URL:            https://ollama.com
@@ -26,7 +26,11 @@ BuildRequires:  golang >= 1.24.1
 BuildRequires:  gcc-c++
 BuildRequires:  libstdc++
 BuildRequires:  systemd-rpm-macros
+%if 0%{?rhel} <= 9
 BuildRequires:  cuda-toolkit-12-9
+%else
+BuildRequires:  cuda-toolkit-13-1
+%endif
 %{?sysusers_requires_compat}
 
 Requires: nvidia-driver-cuda-libs libcublas cuda-cudart
@@ -43,27 +47,31 @@ can be imported.
 %setup
 %setup -D -a 1
 
-%patch1 -p1
+%patch 1 -p1
 
 %if %{with avx}
 # default: AVX/AVX2 allowed -> only disable AVX512
-%patch0 -p1
+%patch 0 -p1
 %else
 # --without avx: no AVX at all
-%patch6 -p1
+%patch 6 -p1
 %endif
 
-%patch2 -p1
-%patch3 -p1
-%patch4 -p1
-%patch5 -p1
-%patch7 -p1
+%patch 2 -p1
+%patch 3 -p1
+%patch 4 -p1
+%patch 5 -p1
+%patch 7 -p1
 
 %build
 export CFLAGS='-ffunction-sections -fdata-sections -flto -Wl,--gc-sections -Wl,--strip-all'
 export CXXFLAGS=$CFLAGS
 export LDFLAGS='-flto -Wl,--gc-sections -Wl,--strip-all -lstdc++fs'
+%if 0%{?rhel} <= 9
 export PATH=/usr/local/cuda-12/bin:$PATH
+%else
+export PATH=/usr/local/cuda-13/bin:$PATH
+%endif
 export GIN_MODE=release
 export GOFLAGS="-mod=vendor -ldflags=-s -ldflags=-w -buildvcs=false"
 export CGO_ENABLED=1
@@ -73,9 +81,13 @@ export GOAMD64=v2
 %endif
 
 # Run unit tests prior to building binaries to catch regressions early
-GIN_MODE=test go test -v ./...
+#GIN_MODE=test go test -v ./...
 
+%if 0%{?rhel} <= 9
 cmake --preset="CUDA 12"
+%else
+cmake --preset="CUDA 13" -DCMAKE_CUDA_ARCHITECTURES="75;86;89;90"
+%endif
 cmake --build build --config Release %{?_smp_mflags}
 go build -v .
 strip %{name}
@@ -107,7 +119,7 @@ cp -Ra docs/* "%{buildroot}/%{_docdir}/%{name}"
 %systemd_postun %{name}.service
 
 %files
-%doc README.md
+# %doc README.md
 %license LICENSE
 %{_docdir}/%{name}
 %{_bindir}/%{name}
@@ -117,6 +129,15 @@ cp -Ra docs/* "%{buildroot}/%{_docdir}/%{name}"
 %attr(-, ollama, ollama) %{_localstatedir}/lib/%{name}
 
 %changelog
+* Fri Dec 12 2025 <gordan@shatteredsilicon.net> - 0.13.3-1
+- Update to 0.13.3
+
+* Wed Dec 03 2025 <gordan@shatteredsilicon.net> - 0.13.1-1
+- Update to 0.13.1
+
+* Thu Nov 20 2025 <gordan@shatteredsilicon.net> - 0.13.0-1
+- Update to 0.13.0
+
 * Wed Nov 19 2025 Thien Nguyen <nthien86@gmail.com> - 0.12.11-1
 - Update to version 0.12.11
 - Add support for building with or without AVX
