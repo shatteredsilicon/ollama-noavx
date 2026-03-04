@@ -1,6 +1,6 @@
-diff -Nru '--exclude=.git' ollama-0.12.10.org/llama/llama.go ollama-0.12.10/llama/llama.go
---- ollama-0.12.10.org/llama/llama.go	2025-11-11 04:27:15.116380231 +0700
-+++ ollama-0.12.10/llama/llama.go	2025-11-11 04:21:05.213281053 +0700
+diff -Nru '--exclude=.git' ollama-0.17.6.org/llama/llama.go ollama-0.17.6/llama/llama.go
+--- ollama-0.17.6.org/llama/llama.go	2026-03-05 03:01:55.283350113 +0700
++++ ollama-0.17.6/llama/llama.go	2026-03-05 03:33:57.773844519 +0700
 @@ -4,6 +4,7 @@
  #cgo CFLAGS: -std=c11
  #cgo windows CFLAGS: -Wno-dll-attribute-on-redeclaration
