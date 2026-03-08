@@ -1,6 +1,6 @@
-diff -Nru '--exclude=.git' ollama-0.12.10.org/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt ollama-0.12.10/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt
---- ollama-0.12.10.org/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt	2025-11-11 04:55:55.044139213 +0700
-+++ ollama-0.12.10/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt	2025-11-11 04:56:27.164456123 +0700
+diff -Nru '--exclude=.git' ollama-0.17.6.org/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt ollama-0.17.6/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt
+--- ollama-0.17.6.org/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt	2026-03-05 03:40:40.219070730 +0700
++++ ollama-0.17.6/ml/backend/ggml/ggml/src/ggml-cuda/CMakeLists.txt	2026-03-05 03:44:37.347431447 +0700
 @@ -120,7 +120,7 @@
  
      set(CUDA_CXX_FLAGS "")

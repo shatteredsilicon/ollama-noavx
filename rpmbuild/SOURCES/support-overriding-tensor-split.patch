@@ -1,28 +1,28 @@
-diff -Nru '--exclude=.git' ollama-0.12.11.org/envconfig/config.go ollama-0.12.11/envconfig/config.go
---- ollama-0.12.11.org/envconfig/config.go	2025-11-19 00:38:57.616799539 +0700
-+++ ollama-0.12.11/envconfig/config.go	2025-11-19 01:17:00.855839053 +0700
-@@ -206,6 +206,9 @@
+diff -Nru '--exclude=.git' ollama-0.17.6.org/envconfig/config.go ollama-0.17.6/envconfig/config.go
+--- ollama-0.17.6.org/envconfig/config.go	2026-03-05 03:01:55.275350306 +0700
++++ ollama-0.17.6/envconfig/config.go	2026-03-05 04:13:15.189184347 +0700
+@@ -209,6 +209,9 @@
  	UseAuth = Bool("OLLAMA_AUTH")
  	// Enable Vulkan backend
  	EnableVulkan = Bool("OLLAMA_VULKAN")
 +	// Optional path to per-model override file (INI).
 +	// If unset, defaults to ~/.ollama.ini
 +	OverrideConfigPath = String("OLLAMA_OVERRIDE_CONFIG")
+ 	// NoCloudEnv checks the OLLAMA_NO_CLOUD environment variable.
+ 	NoCloudEnv = Bool("OLLAMA_NO_CLOUD")
  )
- 
- func String(s string) func() string {
-@@ -293,6 +296,7 @@
- 		"OLLAMA_CONTEXT_LENGTH":    {"OLLAMA_CONTEXT_LENGTH", ContextLength(), "Context length to use unless otherwise specified (default: 4096)"},
+@@ -301,6 +304,7 @@
+ 		"OLLAMA_EDITOR":            {"OLLAMA_EDITOR", Editor(), "Path to editor for interactive prompt editing (Ctrl+G)"},
  		"OLLAMA_NEW_ENGINE":        {"OLLAMA_NEW_ENGINE", NewEngine(), "Enable the new Ollama engine"},
  		"OLLAMA_REMOTES":           {"OLLAMA_REMOTES", Remotes(), "Allowed hosts for remote models (default \"ollama.com\")"},
 +		"OLLAMA_OVERRIDE_CONFIG":   {"OLLAMA_OVERRIDE_CONFIG", OverrideConfigPath(), "Path to model override config (default: ~/.ollama.ini)"},
  
  		// Informational
  		"HTTP_PROXY":  {"HTTP_PROXY", String("HTTP_PROXY")(), "HTTP proxy"},
-diff -Nru '--exclude=.git' ollama-0.12.11.org/envconfig/override.go ollama-0.12.11/envconfig/override.go
---- ollama-0.12.11.org/envconfig/override.go	1970-01-01 08:00:00.000000000 +0800
-+++ ollama-0.12.11/envconfig/override.go	2025-11-19 01:17:24.299987778 +0700
-@@ -0,0 +1,116 @@
+diff -Nru '--exclude=.git' ollama-0.17.6.org/envconfig/override.go ollama-0.17.6/envconfig/override.go
+--- ollama-0.17.6.org/envconfig/override.go	1970-01-01 08:00:00.000000000 +0800
++++ ollama-0.17.6/envconfig/override.go	2026-03-05 04:14:21.529052208 +0700
+@@ -0,0 +1,122 @@
 +package envconfig
 +
 +import (
@@ -32,6 +32,10 @@ diff -Nru '--exclude=.git' ollama-0.12.11.org/envconfig/override.go ollama-0.12.
 +	"strings"
 +)
 +
++// Override represents per-model overrides for GPU offload behavior.
++//
++// NumGPULayers: -1 means unset.
++// TensorSplit: nil means unset.
 +type Override struct {
 +	ModelName    string
 +	NumGPULayers int   // -1 means unset
@@ -40,8 +44,9 @@ diff -Nru '--exclude=.git' ollama-0.12.11.org/envconfig/override.go ollama-0.12.
 +
 +// LoadOverride loads overrides for the given model section name (e.g. "llama3.2-vision:90b").
 +// The INI format is:
-+//   [model-name:params]
++//   [model-name]
 +//   tensor-split=<int[,int,...]>
++//
 +// Note: n-gpu-layers is not read from the file; it is always derived as the sum of tensor-split.
 +// Returns nil if no file or no matching section.
 +func LoadOverride(model string) *Override {
@@ -54,6 +59,7 @@ diff -Nru '--exclude=.git' ollama-0.12.11.org/envconfig/override.go ollama-0.12.
 +		}
 +		path = filepath.Join(home, ".ollama.ini")
 +	}
++
 +	f, err := os.Open(path)
 +	if err != nil {
 +		return nil
@@ -139,9 +145,9 @@ diff -Nru '--exclude=.git' ollama-0.12.11.org/envconfig/override.go ollama-0.12.
 +	}
 +	return out
 +}
-diff -Nru '--exclude=.git' ollama-0.12.11.org/envconfig/override_test.go ollama-0.12.11/envconfig/override_test.go
---- ollama-0.12.11.org/envconfig/override_test.go	1970-01-01 08:00:00.000000000 +0800
-+++ ollama-0.12.11/envconfig/override_test.go	2025-11-19 01:17:24.295987754 +0700
+diff -Nru '--exclude=.git' ollama-0.17.6.org/envconfig/override_test.go ollama-0.17.6/envconfig/override_test.go
+--- ollama-0.17.6.org/envconfig/override_test.go	1970-01-01 08:00:00.000000000 +0800
++++ ollama-0.17.6/envconfig/override_test.go	2026-03-05 04:15:53.097077512 +0700
 @@ -0,0 +1,140 @@
 +package envconfig
 +
@@ -283,10 +289,10 @@ diff -Nru '--exclude=.git' ollama-0.12.11.org/envconfig/override_test.go ollama-
 +		t.Fatalf("expected nil when no valid keys parsed, got %#v", got)
 +	}
 +}
-diff -Nru '--exclude=.git' ollama-0.12.11.org/llm/server.go ollama-0.12.11/llm/server.go
---- ollama-0.12.11.org/llm/server.go	2025-11-19 00:38:57.620799467 +0700
-+++ ollama-0.12.11/llm/server.go	2025-11-19 05:29:24.590916949 +0700
-@@ -103,7 +103,8 @@
+diff -Nru '--exclude=.git' ollama-0.17.6.org/llm/server.go ollama-0.17.6/llm/server.go
+--- ollama-0.17.6.org/llm/server.go	2026-03-05 03:01:55.283350113 +0700
++++ ollama-0.17.6/llm/server.go	2026-03-05 06:04:19.094188046 +0700
+@@ -104,7 +104,8 @@
  	loadStart    time.Time // Record how long it took the model to load
  	loadProgress float32
  
@@ -296,8 +302,8 @@ diff -Nru '--exclude=.git' ollama-0.12.11.org/llm/server.go ollama-0.12.11/llm/s
  }
  
  type llamaServer struct {
-@@ -118,6 +119,80 @@
- 	textProcessor model.TextProcessor // textProcessor handles text encoding/decoding
+@@ -119,6 +120,129 @@
+ 	tokenizer tokenizer.Tokenizer // tokenizer handles text encoding/decoding
  }
  
 +// buildGPULayersFromOverride constructs an explicit ml.GPULayersList from a
@@ -309,18 +315,29 @@ diff -Nru '--exclude=.git' ollama-0.12.11.org/llm/server.go ollama-0.12.11/llm/s
 +//   - gpus: the visible GPUs, whose order is used to map tensor-split entries to
 +//     device IDs (tensor-split index i -> gpus[i]).
 +//   - override: the parsed override which provides:
-+//       * NumGPULayers: how many of the last model layers to offload, and
-+//       * TensorSplit: integer weights describing how to distribute those layers
-+//         across the GPUs (proportional split).
++//       * NumGPULayers: total number of layers to place on GPUs (derived as the sum
++//         of TensorSplit), and
++//       * TensorSplit: exact per-GPU layer counts in GPU order.
 +//
-+// The function assigns the last NumGPULayers layers in the range
-+// [blocks-NumGPULayers, blocks] to GPUs according to the cumulative proportions
-+// derived from TensorSplit. If TensorSplit has more entries than visible GPUs,
-+// any required value is non-positive, the proportional total is zero, or the
-+// computed span is empty, the function returns nil to signal "no override".
++// Semantics:
++//   tensor-split=a,b,c,...
++// means:
++//   - GPU0 gets exactly a layers
++//   - GPU1 gets exactly b layers
++//   - ...
++// assigned from the START of the model in contiguous order.
++// Any remaining layers (the last totalLayers-sum(tensor-split)) are left on CPU.
++//
++// This matches the requirement that a config like:
++//   tensor-split=20,20,20,20
++// on a 100-layer model will place 80 layers on GPUs (20 per GPU, in order) and
++// leave the last 20 layers on CPU.
++//
++// If TensorSplit has more entries than visible GPUs, any entry is <= 0, the sum
++// is <= 0, or the sum exceeds totalLayers, the function returns nil to signal
++// "no override".
 +//
 +// On success it returns a non-empty GPULayersList; otherwise it returns nil.
-+//
 +func buildGPULayersFromOverride(totalLayers int, gpus []ml.DeviceInfo, override *envconfig.Override) ml.GPULayersList {
 +	if totalLayers <= 0 || len(gpus) == 0 || override == nil {
 +		return nil
@@ -328,98 +345,42 @@ diff -Nru '--exclude=.git' ollama-0.12.11.org/llm/server.go ollama-0.12.11/llm/s
 +	if len(override.TensorSplit) > len(gpus) {
 +		return nil
 +	}
-+	// cumulative proportions
-+	var total int
-+	for _, v := range override.TensorSplit {
-+		total += v
++
++	// Validate and compute total GPU layers
++	total := 0
++	for _, n := range override.TensorSplit {
++		if n <= 0 {
++			return nil
++		}
++		total += n
 +	}
-+	if total <= 0 {
++	if total <= 0 || total > totalLayers {
 +		return nil
 +	}
-+	cum := make([]float32, len(override.TensorSplit))
-+	var run float32
-+	for i, v := range override.TensorSplit {
-+		run += float32(v) / float32(total)
-+		cum[i] = run
-+	}
-+
-+	// totalLayers = blocks + 1
-+	blocks := totalLayers - 1
-+	start := max(0, blocks-override.NumGPULayers)
-+	stop := min(start+override.NumGPULayers, blocks+1)
-+
++	// Assign exact, contiguous counts from the start of the model.
++	// We return entries for all visible GPUs, but only the first len(TensorSplit)
++	// will receive layers.
 +	gl := make(ml.GPULayersList, len(gpus))
 +	for i := range gpus {
 +		gl[i].DeviceID = gpus[i].DeviceID
 +	}
 +
-+	span := float32(stop - start)
-+	if span <= 0 {
-+		return nil
-+	}
-+	for layer := start; layer < stop; layer++ {
-+		ratio := float32(layer-start) / span
-+		idx := 0
-+		for i := range cum {
-+			if ratio < cum[i] {
-+				idx = i
-+				break
-+			}
++	layer := 0
++	for i, cnt := range override.TensorSplit {
++		for j := 0; j < cnt; j++ {
++			gl[i].Layers = append(gl[i].Layers, layer)
++			layer++
 +		}
-+		gl[idx].Layers = append(gl[idx].Layers, layer)
 +	}
++
 +	if gl.Sum() == 0 {
 +		return nil
 +	}
 +	return gl
 +}
 +
- // LoadModel will load a model from disk. The model must be in the GGML format.
- //
- // It collects array values for arrays with a size less than or equal to
-@@ -139,7 +214,7 @@
- }
- 
- // NewLlamaServer will run a server for the given GPUs
--func NewLlamaServer(systemInfo ml.SystemInfo, gpus []ml.DeviceInfo, modelPath string, f *ggml.GGML, adapters, projectors []string, opts api.Options, numParallel int) (LlamaServer, error) {
-+func NewLlamaServer(systemInfo ml.SystemInfo, gpus []ml.DeviceInfo, modelPath string, f *ggml.GGML, adapters, projectors []string, opts api.Options, numParallel int, override *envconfig.Override) (LlamaServer, error) {
- 	var llamaModel *llama.Model
- 	var textProcessor model.TextProcessor
- 	var err error
-@@ -243,6 +318,7 @@
- 		totalLayers:    f.KV().BlockCount() + 1,
- 		loadStart:      time.Now(),
- 		done:           make(chan error, 1),
-+		override:       override,
- 	}
- 
- 	if err != nil {
-@@ -455,6 +531,75 @@
- 
- var ErrLoadRequiredFull = errors.New("unable to load full model on GPU")
- 
 +// maybeApplyOverride attempts to replace a heuristic GPU layer layout with a
 +// per-model override read from OLLAMA_OVERRIDE_CONFIG.
-+//
-+// Inputs:
-+//   - gpus: the set of visible GPUs (their order is used to map tensor-split
-+//     entries onto devices: tensor-split index i -> gpus[i]).
-+//   - gpuLayers: the current, heuristic ml.GPULayersList that would be used if
-+//     no override is applied.
-+//
-+// Behavior:
-+//   * If no override is configured, or it is incomplete (missing NumGPULayers
-+//     or TensorSplit), the function returns the original gpuLayers and false.
-+//   * If TensorSplit has more entries than visible GPUs, or NumGPULayers
-+//     exceeds the model's total layers (block_count+1), the override is ignored
-+//     and the function returns the original gpuLayers and false (with a log
-+//     warning).
-+//   * Otherwise, it builds a replacement assignment via buildGPULayersFromOverride.
-+//     On success, it logs the application, updates s.options.NumGPU to match
-+//     the override's NumGPULayers (so downstream logging/heuristics see a
-+//     consistent value), and returns (override, true). If the mapping produces
-+//     no layers, the heuristic layout is kept and false is returned.
-+//
 +func (s *llmServer) maybeApplyOverride(gpus []ml.DeviceInfo, gpuLayers ml.GPULayersList) (ml.GPULayersList, bool) {
 +	// If no override loaded, or incomplete, bail out
 +	if s.override == nil || s.override.NumGPULayers <= 0 || len(s.override.TensorSplit) == 0 {
@@ -455,22 +416,40 @@ diff -Nru '--exclude=.git' ollama-0.12.11.org/llm/server.go ollama-0.12.11/llm/s
 +		return gpuLayers, false
 +	}
 +
++	cpuLayers := max(0, int(s.totalLayers)-s.override.NumGPULayers)
++
 +	slog.Info(
 +		"Applying override from OLLAMA_OVERRIDE_CONFIG",
 +		"model", s.override.ModelName,
 +		"n_gpu_layers", s.override.NumGPULayers,
++		"cpu_tail_layers", cpuLayers,
 +		"tensor_split", s.override.TensorSplit,
-+		"layers_offloaded", override.Sum(),
++		"layers_on_gpu", override.Sum(),
 +	)
-+	// Align NumGPU with override for downstream logging / heuristics that read it
-+	s.options.NumGPU = s.override.NumGPULayers
 +	return override, true
 +}
 +
- func (s *llamaServer) Load(ctx context.Context, systemInfo ml.SystemInfo, systemGPUs []ml.DeviceInfo, requireFull bool) ([]ml.DeviceID, error) {
- 	slog.Info("loading model", "model layers", s.totalLayers, "requested", s.options.NumGPU)
+ // LoadModel will load a model from disk. The model must be in the GGML format.
+ //
+ // It collects array values for arrays with a size less than or equal to
+@@ -140,7 +264,7 @@
+ }
  
-@@ -582,6 +727,11 @@
+ // NewLlamaServer will run a server for the given GPUs
+-func NewLlamaServer(systemInfo ml.SystemInfo, gpus []ml.DeviceInfo, modelPath string, f *ggml.GGML, adapters, projectors []string, opts api.Options, numParallel int) (LlamaServer, error) {
++func NewLlamaServer(systemInfo ml.SystemInfo, gpus []ml.DeviceInfo, modelPath string, f *ggml.GGML, adapters, projectors []string, opts api.Options, numParallel int, override *envconfig.Override) (LlamaServer, error) {
+ 	var llamaModel *llama.Model
+ 	var tok tokenizer.Tokenizer
+ 	var err error
+@@ -278,6 +402,7 @@
+ 		llamaModel:     llamaModel,
+ 		llamaModelLock: &sync.Mutex{},
+ 		sem:            semaphore.NewWeighted(int64(numParallel)),
++		override:       override,
+ 		totalLayers:    f.KV().BlockCount() + 1,
+ 		loadStart:      time.Now(),
+ 		done:           make(chan error, 1),
+@@ -636,6 +761,11 @@
  		}
  	}
  
@@ -482,7 +461,19 @@ diff -Nru '--exclude=.git' ollama-0.12.11.org/llm/server.go ollama-0.12.11/llm/s
  	// This maintains the historical assignment of graph sizes, though it isn't fully accurate
  	graphSize := graphFullOffload
  	if gpuLayers.Sum() < int(s.totalLayers) {
-@@ -717,6 +867,10 @@
+@@ -764,6 +894,11 @@
+ 		return nil, err
+ 	}
+ 
++	// Apply per-model override
++	if newLayers, ok := s.maybeApplyOverride(gpus, gpuLayers); ok {
++		gpuLayers = newLayers
++	}
++
+ 	if err := s.waitUntilRunnerLaunched(ctx); err != nil {
+ 		return nil, err
+ 	}
+@@ -772,6 +907,10 @@
  	for operation := LoadOperationFit; operation < LoadOperationCommit; operation++ {
  	nextLoad:
  		for {
@@ -493,9 +484,42 @@ diff -Nru '--exclude=.git' ollama-0.12.11.org/llm/server.go ollama-0.12.11/llm/s
  			s.loadRequest.GPULayers = gpuLayers
  			resp, err := s.initModel(ctx, s.loadRequest, operation)
  			if err != nil {
-diff -Nru '--exclude=.git' ollama-0.12.11.org/server/routes_generate_test.go ollama-0.12.11/server/routes_generate_test.go
---- ollama-0.12.11.org/server/routes_generate_test.go	2025-11-19 00:38:57.632799251 +0700
-+++ ollama-0.12.11/server/routes_generate_test.go	2025-11-19 05:01:53.680127021 +0700
+@@ -789,6 +928,10 @@
+ 				if err != nil {
+ 					return nil, err
+ 				}
++				// Apply per-model override immediately for consistency
++				if newLayers, ok := s.maybeApplyOverride(gpus, newGPULayers); ok {
++					newGPULayers = newLayers
++				}
+ 
+ 				slog.Debug("new layout created", "layers", newGPULayers)
+ 
+@@ -825,6 +968,10 @@
+ 						}
+ 						slog.Debug("new layout created", "layers", newGPULayers)
+ 
++						// Apply per-model override if present
++						if newLayers, ok := s.maybeApplyOverride(gpus, newGPULayers); ok {
++							newGPULayers = newLayers
++						}
+ 						s.loadRequest.GPULayers = newGPULayers
+ 						resp, err = s.initModel(ctx, s.loadRequest, operation)
+ 						if err != nil {
+@@ -839,6 +986,10 @@
+ 							if err != nil {
+ 								return nil, err
+ 							}
++							// Apply per-model override for apples-to-apples comparison
++							if newLayers, ok := s.maybeApplyOverride(gpus, verifyGPULayers); ok {
++								verifyGPULayers = newLayers
++							}
+ 
+ 							slog.Debug("verifying layout", "layers", verifyGPULayers)
+ 
+diff -Nru '--exclude=.git' ollama-0.17.6.org/server/routes_generate_test.go ollama-0.17.6/server/routes_generate_test.go
+--- ollama-0.17.6.org/server/routes_generate_test.go	2026-03-05 03:01:55.295349822 +0700
++++ ollama-0.17.6/server/routes_generate_test.go	2026-03-05 05:55:39.773419728 +0700
 @@ -17,6 +17,7 @@
  	"github.com/google/go-cmp/cmp"
  
@@ -503,10 +527,10 @@ diff -Nru '--exclude=.git' ollama-0.12.11.org/server/routes_generate_test.go oll
 +	"github.com/ollama/ollama/envconfig"
  	"github.com/ollama/ollama/fs/ggml"
  	"github.com/ollama/ollama/llm"
- 	"github.com/ollama/ollama/ml"
-@@ -48,8 +49,8 @@
- 	return
- }
+ 	"github.com/ollama/ollama/manifest"
+@@ -75,8 +76,8 @@
+ 
+ func (mockRunner) Ping(_ context.Context) error { return nil }
  
 -func newMockServer(mock *mockRunner) func(ml.SystemInfo, []ml.DeviceInfo, string, *ggml.GGML, []string, []string, api.Options, int) (llm.LlamaServer, error) {
 -	return func(_ ml.SystemInfo, _ []ml.DeviceInfo, _ string, _ *ggml.GGML, _, _ []string, _ api.Options, _ int) (llm.LlamaServer, error) {
@@ -515,10 +539,10 @@ diff -Nru '--exclude=.git' ollama-0.12.11.org/server/routes_generate_test.go oll
  		return mock, nil
  	}
  }
-diff -Nru '--exclude=.git' ollama-0.12.11.org/server/sched.go ollama-0.12.11/server/sched.go
---- ollama-0.12.11.org/server/sched.go	2025-11-19 00:38:57.632799251 +0700
-+++ ollama-0.12.11/server/sched.go	2025-11-19 05:29:30.047032863 +0700
-@@ -50,7 +50,7 @@
+diff -Nru '--exclude=.git' ollama-0.17.6.org/server/sched.go ollama-0.17.6/server/sched.go
+--- ollama-0.17.6.org/server/sched.go	2026-03-05 03:01:55.295349822 +0700
++++ ollama-0.17.6/server/sched.go	2026-03-05 05:57:31.633585438 +0700
+@@ -52,7 +52,7 @@
  	loaded        map[string]*runnerRef
  
  	loadFn          func(req *LlmRequest, f *ggml.GGML, systemInfo ml.SystemInfo, gpus []ml.DeviceInfo, requireFull bool) bool
@@ -527,7 +551,7 @@ diff -Nru '--exclude=.git' ollama-0.12.11.org/server/sched.go ollama-0.12.11/ser
  	getGpuFn        func(ctx context.Context, runners []ml.FilteredRunnerDiscovery) []ml.DeviceInfo
  	getSystemInfoFn func() ml.SystemInfo
  	waitForRecovery time.Duration
-@@ -414,7 +414,9 @@
+@@ -460,7 +460,9 @@
  
  	if llama == nil {
  		var err error
@@ -538,17 +562,17 @@ diff -Nru '--exclude=.git' ollama-0.12.11.org/server/sched.go ollama-0.12.11/ser
  		if err != nil {
  			// some older models are not compatible with newer versions of llama.cpp
  			// show a generalized compatibility error until there is a better way to
-diff -Nru '--exclude=.git' ollama-0.12.11.org/server/sched_test.go ollama-0.12.11/server/sched_test.go
---- ollama-0.12.11.org/server/sched_test.go	2025-11-19 00:23:31.277530575 +0700
-+++ ollama-0.12.11/server/sched_test.go	2025-11-19 05:00:31.990633187 +0700
-@@ -9,6 +9,7 @@
- 	"testing"
- 	"time"
- 
-+	"github.com/ollama/ollama/envconfig"
+diff -Nru '--exclude=.git' ollama-0.17.6.org/server/sched_test.go ollama-0.17.6/server/sched_test.go
+--- ollama-0.17.6.org/server/sched_test.go	2026-03-05 03:01:55.295349822 +0700
++++ ollama-0.17.6/server/sched_test.go	2026-03-05 06:00:02.862655786 +0700
+@@ -12,6 +12,7 @@
  	"github.com/stretchr/testify/require"
  
  	"github.com/ollama/ollama/api"
++	"github.com/ollama/ollama/envconfig"
+ 	"github.com/ollama/ollama/format"
+ 	"github.com/ollama/ollama/fs/ggml"
+ 	"github.com/ollama/ollama/llm"
 @@ -49,7 +50,7 @@
  		sessionDuration: &api.Duration{Duration: 2 * time.Second},
  	}
@@ -576,7 +600,7 @@ diff -Nru '--exclude=.git' ollama-0.12.11.org/server/sched_test.go ollama-0.12.1
  	scenario.srv.modelPath = model
  	return scenario.srv, nil
  }
-@@ -466,7 +467,7 @@
+@@ -531,7 +532,7 @@
  	gpus := []ml.DeviceInfo{}
  	systemInfo := ml.SystemInfo{}
  	server := &mockLlm{vramSize: 10, vramByGPU: map[ml.DeviceID]uint64{}}

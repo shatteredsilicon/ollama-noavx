@@ -1,6 +1,6 @@
-diff -Nru '--exclude=.git' ollama-0.13.3.org/ml/backend/ggml/ggml/src/CMakeLists.txt ollama-0.13.3/ml/backend/ggml/ggml/src/CMakeLists.txt
---- ollama-0.13.3.org/ml/backend/ggml/ggml/src/CMakeLists.txt	2025-11-19 01:04:07.069004332 +0700
-+++ ollama-0.13.3/ml/backend/ggml/ggml/src/CMakeLists.txt	2025-11-19 01:04:47.293508516 +0700
+diff -Nru '--exclude=.git' ollama-0.17.6.org/ml/backend/ggml/ggml/src/CMakeLists.txt ollama-0.17.6/ml/backend/ggml/ggml/src/CMakeLists.txt
+--- ollama-0.17.6.org/ml/backend/ggml/ggml/src/CMakeLists.txt	2026-03-05 03:01:55.283350113 +0700
++++ ollama-0.17.6/ml/backend/ggml/ggml/src/CMakeLists.txt	2026-03-05 03:08:37.759781530 +0700
 @@ -428,20 +428,20 @@
      ggml_add_cpu_backend_variant_impl("")
  endif()

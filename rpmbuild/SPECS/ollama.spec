@@ -3,8 +3,8 @@
 %bcond_without avx
 
 Name:           ollama
-Version:        0.13.3
-Release:        3%{?dist}
+Version:        0.17.6
+Release:        1%{?dist}
 Summary:        Tool for running AI models on-premise
 License:        MIT
 URL:            https://ollama.com
@@ -129,6 +129,26 @@ cp -Ra docs/* "%{buildroot}/%{_docdir}/%{name}"
 %attr(-, ollama, ollama) %{_localstatedir}/lib/%{name}
 
 %changelog
+* Thu Mar 5 2026 Thien Nguyen <nthien86@gmail.com> - 0.17.6-1
+- Update to version 0.17.6
+- Enable tensor-split-override.
+
+* Fri Jan 30 2026 <gordan@shatteredsilicon.net> - 0.15.2-3
+- Update to 0.15.2
+- Disable tensor-split-override.
+
+* Mon Jan 19 2026 <gordan@shatteredsilicon.net> - 0.14.2-3
+- Update to 0.14.2
+
+* Sun Jan 18 2026 <gordan@shatteredsilicon.net> - 0.14.1-3
+- Update to 0.14.1
+
+* Wed Dec 24 2025 <gordan@shatteredsilicon.net> - 0.13.5-4
+- with AVX2 by default
+
+* Tue Dec 23 2025 <gordan@shatteredsilicon.net> - 0.13.5-3
+- Update to 0.13.5
+
 * Fri Dec 12 2025 <gordan@shatteredsilicon.net> - 0.13.3-1
 - Update to 0.13.3
 
@@ -203,4 +223,3 @@ cp -Ra docs/* "%{buildroot}/%{_docdir}/%{name}"
 * Wed Feb 19 2025 <nthien86@gmail.com> - 0.5.11-1
 - Initial release with 0.5.11 patched to disable AVX requirements
 - CUDA 11 only, compute model 3.5 - 9.0
-
