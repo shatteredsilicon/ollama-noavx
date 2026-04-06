@@ -1,6 +1,6 @@
 diff -Nru '--exclude=.git' ollama-0.17.6.org/envconfig/config.go ollama-0.17.6/envconfig/config.go
---- ollama-0.17.6.org/envconfig/config.go	2026-03-05 03:01:55.275350306 +0700
-+++ ollama-0.17.6/envconfig/config.go	2026-03-05 04:13:15.189184347 +0700
+--- ollama-0.18.3.org/envconfig/config.go	2026-03-05 03:01:55.275350306 +0700
++++ ollama-0.18.3/envconfig/config.go	2026-03-05 04:13:15.189184347 +0700
 @@ -209,6 +209,9 @@
  	UseAuth = Bool("OLLAMA_AUTH")
  	// Enable Vulkan backend
@@ -11,11 +11,11 @@ diff -Nru '--exclude=.git' ollama-0.17.6.org/envconfig/config.go ollama-0.17.6/e
  	// NoCloudEnv checks the OLLAMA_NO_CLOUD environment variable.
  	NoCloudEnv = Bool("OLLAMA_NO_CLOUD")
  )
-@@ -301,6 +304,7 @@
- 		"OLLAMA_EDITOR":            {"OLLAMA_EDITOR", Editor(), "Path to editor for interactive prompt editing (Ctrl+G)"},
- 		"OLLAMA_NEW_ENGINE":        {"OLLAMA_NEW_ENGINE", NewEngine(), "Enable the new Ollama engine"},
- 		"OLLAMA_REMOTES":           {"OLLAMA_REMOTES", Remotes(), "Allowed hosts for remote models (default \"ollama.com\")"},
-+		"OLLAMA_OVERRIDE_CONFIG":   {"OLLAMA_OVERRIDE_CONFIG", OverrideConfigPath(), "Path to model override config (default: ~/.ollama.ini)"},
+@@ -330,6 +330,7 @@
+ 		"OLLAMA_EDITOR":             {"OLLAMA_EDITOR", Editor(), "Path to editor for interactive prompt editing (Ctrl+G)"},
+ 		"OLLAMA_NEW_ENGINE":         {"OLLAMA_NEW_ENGINE", NewEngine(), "Enable the new Ollama engine"},
+ 		"OLLAMA_REMOTES":            {"OLLAMA_REMOTES", Remotes(), "Allowed hosts for remote models (default \"ollama.com\")"},
++		"OLLAMA_OVERRIDE_CONFIG":    {"OLLAMA_OVERRIDE_CONFIG", OverrideConfigPath(), "Path to model override config (default: ~/.ollama.ini)"},
  
  		// Informational
  		"HTTP_PROXY":  {"HTTP_PROXY", String("HTTP_PROXY")(), "HTTP proxy"},
@@ -441,14 +441,14 @@ diff -Nru '--exclude=.git' ollama-0.17.6.org/llm/server.go ollama-0.17.6/llm/ser
  	var llamaModel *llama.Model
  	var tok tokenizer.Tokenizer
  	var err error
-@@ -278,6 +402,7 @@
+@@ -403,6 +403,7 @@
  		llamaModel:     llamaModel,
  		llamaModelLock: &sync.Mutex{},
  		sem:            semaphore.NewWeighted(int64(numParallel)),
 +		override:       override,
  		totalLayers:    f.KV().BlockCount() + 1,
  		loadStart:      time.Now(),
- 		done:           make(chan error, 1),
+ 		done:           make(chan struct{}),
 @@ -636,6 +761,11 @@
  		}
  	}
@@ -539,29 +539,6 @@ diff -Nru '--exclude=.git' ollama-0.17.6.org/server/routes_generate_test.go olla
  		return mock, nil
  	}
  }
-diff -Nru '--exclude=.git' ollama-0.17.6.org/server/sched.go ollama-0.17.6/server/sched.go
---- ollama-0.17.6.org/server/sched.go	2026-03-05 03:01:55.295349822 +0700
-+++ ollama-0.17.6/server/sched.go	2026-03-05 05:57:31.633585438 +0700
-@@ -52,7 +52,7 @@
- 	loaded        map[string]*runnerRef
- 
- 	loadFn          func(req *LlmRequest, f *ggml.GGML, systemInfo ml.SystemInfo, gpus []ml.DeviceInfo, requireFull bool) bool
--	newServerFn     func(systemInfo ml.SystemInfo, gpus []ml.DeviceInfo, model string, f *ggml.GGML, adapters []string, projectors []string, opts api.Options, numParallel int) (llm.LlamaServer, error)
-+	newServerFn     func(systemInfo ml.SystemInfo, gpus []ml.DeviceInfo, model string, f *ggml.GGML, adapters []string, projectors []string, opts api.Options, numParallel int, override *envconfig.Override) (llm.LlamaServer, error)
- 	getGpuFn        func(ctx context.Context, runners []ml.FilteredRunnerDiscovery) []ml.DeviceInfo
- 	getSystemInfoFn func() ml.SystemInfo
- 	waitForRecovery time.Duration
-@@ -460,7 +460,9 @@
- 
- 	if llama == nil {
- 		var err error
--		llama, err = s.newServerFn(systemInfo, gpus, req.model.ModelPath, f, req.model.AdapterPaths, req.model.ProjectorPaths, req.opts, numParallel)
-+		// Load per-model override (by short name)
-+		override := envconfig.LoadOverride(req.model.ShortName)
-+		llama, err = s.newServerFn(systemInfo, gpus, req.model.ModelPath, f, req.model.AdapterPaths, req.model.ProjectorPaths, req.opts, numParallel, override)
- 		if err != nil {
- 			// some older models are not compatible with newer versions of llama.cpp
- 			// show a generalized compatibility error until there is a better way to
 diff -Nru '--exclude=.git' ollama-0.17.6.org/server/sched_test.go ollama-0.17.6/server/sched_test.go
 --- ollama-0.17.6.org/server/sched_test.go	2026-03-05 03:01:55.295349822 +0700
 +++ ollama-0.17.6/server/sched_test.go	2026-03-05 06:00:02.862655786 +0700
@@ -591,8 +568,8 @@ diff -Nru '--exclude=.git' ollama-0.17.6.org/server/sched_test.go ollama-0.17.6/
  		server.modelPath = model
  		return server, nil
  	}
-@@ -106,7 +107,7 @@
- 	f       *ggml.GGML
+@@ -136,7 +136,7 @@
+ 	req     *LlmRequest
  }
  
 -func (scenario *reqBundle) newServer(systemInfo ml.SystemInfo, gpus []ml.DeviceInfo, model string, f *ggml.GGML, adapters []string, projectors []string, opts api.Options, numParallel int) (llm.LlamaServer, error) {
@@ -609,3 +586,25 @@ diff -Nru '--exclude=.git' ollama-0.17.6.org/server/sched_test.go ollama-0.17.6/
  		server.modelPath = model
  		return server, nil
  	}
+--- ollama-0.18.2.orig/server/sched.go.orig	2026-03-28 18:48:41.058067438 +0200
++++ ollama-0.18.2/server/sched.go	2026-03-28 18:51:06.999153664 +0200
+@@ -52,7 +52,7 @@
+ 	loaded        map[string]*runnerRef
+ 
+ 	loadFn          func(req *LlmRequest, systemInfo ml.SystemInfo, gpus []ml.DeviceInfo, requireFull bool) bool
+-	newServerFn     func(systemInfo ml.SystemInfo, gpus []ml.DeviceInfo, model string, f *ggml.GGML, adapters []string, projectors []string, opts api.Options, numParallel int) (llm.LlamaServer, error)
++	newServerFn     func(systemInfo ml.SystemInfo, gpus []ml.DeviceInfo, model string, f *ggml.GGML, adapters []string, projectors []string, opts api.Options, numParallel int, override *envconfig.Override) (llm.LlamaServer, error)
+ 	getGpuFn        func(ctx context.Context, runners []ml.FilteredRunnerDiscovery) []ml.DeviceInfo
+ 	getSystemInfoFn func() ml.SystemInfo
+ 	waitForRecovery time.Duration
+@@ -441,7 +441,9 @@
+ 				s.loadedMu.Unlock()
+ 				return false
+ 			}
+-			llama, err = s.newServerFn(systemInfo, gpus, req.model.ModelPath, f, req.model.AdapterPaths, req.model.ProjectorPaths, req.opts, numParallel)
++			// Load per-model override (by short name)
++			override := envconfig.LoadOverride(req.model.ShortName)
++			llama, err = s.newServerFn(systemInfo, gpus, req.model.ModelPath, f, req.model.AdapterPaths, req.model.ProjectorPaths, req.opts, numParallel, override)
+ 			if err != nil {
+ 				// some older models are not compatible with newer versions of llama.cpp
+ 				// show a generalized compatibility error until there is a better way to

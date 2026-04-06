@@ -3,7 +3,7 @@
 %bcond_without avx
 
 Name:           ollama
-Version:        0.17.6
+Version:        0.20.2
 Release:        1%{?dist}
 Summary:        Tool for running AI models on-premise
 License:        MIT
@@ -129,6 +129,24 @@ cp -Ra docs/* "%{buildroot}/%{_docdir}/%{name}"
 %attr(-, ollama, ollama) %{_localstatedir}/lib/%{name}
 
 %changelog
+* Sat Apr 04 2026 Gordan Bobic <gordan@shatteredsilicon.net> - 0.20.2-1
+- Update to version 0.20.2
+
+* Fri Apr 03 2026 Gordan Bobic <gordan@shatteredsilicon.net> - 0.20.0-1
+- Update to version 0.20.0
+
+* Tue Mar 31 2026 Gordan Bobic <gordan@shatteredsilicon.net> - 0.19.0-1
+- Update to version 0.19.0
+
+* Sat Mar 28 2026 Gordan Bobic <gordan@shatteredsilicon.net> - 0.18.3-1
+- Update to version 0.18.3
+
+* Sat Mar 28 2026 Gordan Bobic <gordan@shatteredsilicon.net> - 0.18.2-1
+- Update to version 0.18.2
+
+* Sun Mar 8 2026 Gordan Bobic <gordan@shatteredsilicon.net> - 0.17.7-1
+- Update to version 0.17.7
+
 * Thu Mar 5 2026 Thien Nguyen <nthien86@gmail.com> - 0.17.6-1
 - Update to version 0.17.6
 - Enable tensor-split-override.
