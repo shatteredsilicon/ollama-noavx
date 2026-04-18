@@ -3,13 +3,15 @@
 %bcond_without avx
 
 Name:           ollama
-Version:        0.20.2
+%global upstream_version 0.20.2
+
+Version:        %{upstream_version}
 Release:        1%{?dist}
 Summary:        Tool for running AI models on-premise
 License:        MIT
 URL:            https://ollama.com
-Source:         %{name}-%{version}.tar.gz
-Source1:        %{name}-%{version}-vendor.tar.gz
+Source:         %{name}-%{upstream_version}.tar.gz
+Source1:        %{name}-%{upstream_version}-vendor.tar.gz
 Source2:        %{name}.service
 Source3:        %{name}-user.conf
 Patch0:         ollama-disable-avx512.patch

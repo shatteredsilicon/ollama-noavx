@@ -1,23 +1,34 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-set -e
+set -euo pipefail
 
-export GOAMD64=v2
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+spec_file="$script_dir/../SPECS/ollama.spec"
 
-VERSION="0.20.2"
+VERSION="${1:-${VERSION:-$(awk '
+  /^%global[[:space:]]+upstream_version[[:space:]]+/ { print $3; found=1; exit }
+  /^Version:[[:space:]]+/ && !found { print $2; exit }
+' "$spec_file")}}"
 
-rm -f ollama-${VERSION}-vendor.tar.gz
-rm -f ollama-${VERSION}.tar.gz
-rm -f v${VERSION}.tar.gz
+test -n "$VERSION"
 
-wget https://github.com/ollama/ollama/archive/refs/tags/v${VERSION}.tar.gz
-tar -zxvf v${VERSION}.tar.gz
-tar -zcvf ollama-${VERSION}.tar.gz ollama-${VERSION}
+export GOAMD64="${GOAMD64:-v2}"
 
-pushd ollama-${VERSION}
+cd "$script_dir"
+
+rm -f "ollama-${VERSION}-vendor.tar.gz"
+rm -f "ollama-${VERSION}.tar.gz"
+rm -f "v${VERSION}.tar.gz"
+rm -rf "ollama-${VERSION}"
+
+wget -O "v${VERSION}.tar.gz" "https://github.com/ollama/ollama/archive/refs/tags/v${VERSION}.tar.gz"
+tar -zxf "v${VERSION}.tar.gz"
+tar -zcf "ollama-${VERSION}.tar.gz" "ollama-${VERSION}"
+
+pushd "ollama-${VERSION}" >/dev/null
 go mod vendor
-tar -zcvf ../ollama-${VERSION}-vendor.tar.gz vendor
-popd
+tar -zcf "../ollama-${VERSION}-vendor.tar.gz" vendor
+popd >/dev/null
 
-rm -rf ollama-${VERSION}
-rm -f v${VERSION}.tar.gz
+rm -rf "ollama-${VERSION}"
+rm -f "v${VERSION}.tar.gz"
