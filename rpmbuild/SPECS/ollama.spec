@@ -2,9 +2,9 @@
 
 %bcond_without avx
 
-Name:           ollama
-%global upstream_version 0.20.2
+%{!?upstream_version:%{error:upstream_version must be defined, e.g. rpmbuild --define 'upstream_version 0.21.0'}}
 
+Name:           ollama
 Version:        %{upstream_version}
 Release:        1%{?dist}
 Summary:        Tool for running AI models on-premise
