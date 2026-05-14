@@ -1,7 +1,7 @@
-diff -Nru '--exclude=.git' ollama-0.17.6.org/envconfig/config.go ollama-0.17.6/envconfig/config.go
---- ollama-0.18.3.org/envconfig/config.go	2026-03-05 03:01:55.275350306 +0700
-+++ ollama-0.18.3/envconfig/config.go	2026-03-05 04:13:15.189184347 +0700
-@@ -209,6 +209,9 @@
+diff -Nru '--exclude=.git' ollama-0.23.4.org/envconfig/config.go ollama-0.23.4/envconfig/config.go
+--- ollama-0.23.4.org/envconfig/config.go	2026-05-14 22:42:40.015139609 +0700
++++ ollama-0.23.4/envconfig/config.go	2026-05-14 23:33:16.037786991 +0700
+@@ -234,6 +234,9 @@
  	UseAuth = Bool("OLLAMA_AUTH")
  	// Enable Vulkan backend
  	EnableVulkan = Bool("OLLAMA_VULKAN")
@@ -11,17 +11,17 @@ diff -Nru '--exclude=.git' ollama-0.17.6.org/envconfig/config.go ollama-0.17.6/e
  	// NoCloudEnv checks the OLLAMA_NO_CLOUD environment variable.
  	NoCloudEnv = Bool("OLLAMA_NO_CLOUD")
  )
-@@ -330,6 +330,7 @@
- 		"OLLAMA_EDITOR":             {"OLLAMA_EDITOR", Editor(), "Path to editor for interactive prompt editing (Ctrl+G)"},
- 		"OLLAMA_NEW_ENGINE":         {"OLLAMA_NEW_ENGINE", NewEngine(), "Enable the new Ollama engine"},
- 		"OLLAMA_REMOTES":            {"OLLAMA_REMOTES", Remotes(), "Allowed hosts for remote models (default \"ollama.com\")"},
-+		"OLLAMA_OVERRIDE_CONFIG":    {"OLLAMA_OVERRIDE_CONFIG", OverrideConfigPath(), "Path to model override config (default: ~/.ollama.ini)"},
+@@ -334,6 +337,7 @@
+ 		"OLLAMA_EDITOR":               {"OLLAMA_EDITOR", Editor(), "Path to editor for interactive prompt editing (Ctrl+G)"},
+ 		"OLLAMA_NEW_ENGINE":           {"OLLAMA_NEW_ENGINE", NewEngine(), "Enable the new Ollama engine"},
+ 		"OLLAMA_REMOTES":              {"OLLAMA_REMOTES", Remotes(), "Allowed hosts for remote models (default \"ollama.com\")"},
++		"OLLAMA_OVERRIDE_CONFIG":      {"OLLAMA_OVERRIDE_CONFIG", OverrideConfigPath(), "Path to model override config (default: ~/.ollama.ini)"},
  
  		// Informational
  		"HTTP_PROXY":  {"HTTP_PROXY", String("HTTP_PROXY")(), "HTTP proxy"},
-diff -Nru '--exclude=.git' ollama-0.17.6.org/envconfig/override.go ollama-0.17.6/envconfig/override.go
---- ollama-0.17.6.org/envconfig/override.go	1970-01-01 08:00:00.000000000 +0800
-+++ ollama-0.17.6/envconfig/override.go	2026-03-05 04:14:21.529052208 +0700
+diff -Nru '--exclude=.git' ollama-0.23.4.org/envconfig/override.go ollama-0.23.4/envconfig/override.go
+--- ollama-0.23.4.org/envconfig/override.go	1970-01-01 08:00:00.000000000 +0800
++++ ollama-0.23.4/envconfig/override.go	2026-05-14 23:06:38.712216956 +0700
 @@ -0,0 +1,122 @@
 +package envconfig
 +
@@ -145,9 +145,9 @@ diff -Nru '--exclude=.git' ollama-0.17.6.org/envconfig/override.go ollama-0.17.6
 +	}
 +	return out
 +}
-diff -Nru '--exclude=.git' ollama-0.17.6.org/envconfig/override_test.go ollama-0.17.6/envconfig/override_test.go
---- ollama-0.17.6.org/envconfig/override_test.go	1970-01-01 08:00:00.000000000 +0800
-+++ ollama-0.17.6/envconfig/override_test.go	2026-03-05 04:15:53.097077512 +0700
+diff -Nru '--exclude=.git' ollama-0.23.4.org/envconfig/override_test.go ollama-0.23.4/envconfig/override_test.go
+--- ollama-0.23.4.org/envconfig/override_test.go	1970-01-01 08:00:00.000000000 +0800
++++ ollama-0.23.4/envconfig/override_test.go	2026-05-14 23:06:38.712216956 +0700
 @@ -0,0 +1,140 @@
 +package envconfig
 +
@@ -289,10 +289,10 @@ diff -Nru '--exclude=.git' ollama-0.17.6.org/envconfig/override_test.go ollama-0
 +		t.Fatalf("expected nil when no valid keys parsed, got %#v", got)
 +	}
 +}
-diff -Nru '--exclude=.git' ollama-0.17.6.org/llm/server.go ollama-0.17.6/llm/server.go
---- ollama-0.17.6.org/llm/server.go	2026-03-05 03:01:55.283350113 +0700
-+++ ollama-0.17.6/llm/server.go	2026-03-05 06:04:19.094188046 +0700
-@@ -104,7 +104,8 @@
+diff -Nru '--exclude=.git' ollama-0.23.4.org/llm/server.go ollama-0.23.4/llm/server.go
+--- ollama-0.23.4.org/llm/server.go	2026-05-14 22:42:40.071139886 +0700
++++ ollama-0.23.4/llm/server.go	2026-05-14 23:06:38.712216956 +0700
+@@ -105,7 +105,8 @@
  	loadStart    time.Time // Record how long it took the model to load
  	loadProgress float32
  
@@ -302,7 +302,7 @@ diff -Nru '--exclude=.git' ollama-0.17.6.org/llm/server.go ollama-0.17.6/llm/ser
  }
  
  type llamaServer struct {
-@@ -119,6 +120,129 @@
+@@ -120,6 +121,129 @@
  	tokenizer tokenizer.Tokenizer // tokenizer handles text encoding/decoding
  }
  
@@ -432,7 +432,7 @@ diff -Nru '--exclude=.git' ollama-0.17.6.org/llm/server.go ollama-0.17.6/llm/ser
  // LoadModel will load a model from disk. The model must be in the GGML format.
  //
  // It collects array values for arrays with a size less than or equal to
-@@ -140,7 +264,7 @@
+@@ -141,7 +265,7 @@
  }
  
  // NewLlamaServer will run a server for the given GPUs
@@ -441,7 +441,7 @@ diff -Nru '--exclude=.git' ollama-0.17.6.org/llm/server.go ollama-0.17.6/llm/ser
  	var llamaModel *llama.Model
  	var tok tokenizer.Tokenizer
  	var err error
-@@ -403,6 +403,7 @@
+@@ -291,6 +415,7 @@
  		llamaModel:     llamaModel,
  		llamaModelLock: &sync.Mutex{},
  		sem:            semaphore.NewWeighted(int64(numParallel)),
@@ -449,7 +449,7 @@ diff -Nru '--exclude=.git' ollama-0.17.6.org/llm/server.go ollama-0.17.6/llm/ser
  		totalLayers:    f.KV().BlockCount() + 1,
  		loadStart:      time.Now(),
  		done:           make(chan struct{}),
-@@ -636,6 +761,11 @@
+@@ -671,6 +796,11 @@
  		}
  	}
  
@@ -461,7 +461,7 @@ diff -Nru '--exclude=.git' ollama-0.17.6.org/llm/server.go ollama-0.17.6/llm/ser
  	// This maintains the historical assignment of graph sizes, though it isn't fully accurate
  	graphSize := graphFullOffload
  	if gpuLayers.Sum() < int(s.totalLayers) {
-@@ -764,6 +894,11 @@
+@@ -799,6 +929,11 @@
  		return nil, err
  	}
  
@@ -473,7 +473,7 @@ diff -Nru '--exclude=.git' ollama-0.17.6.org/llm/server.go ollama-0.17.6/llm/ser
  	if err := s.waitUntilRunnerLaunched(ctx); err != nil {
  		return nil, err
  	}
-@@ -772,6 +907,10 @@
+@@ -807,6 +942,10 @@
  	for operation := LoadOperationFit; operation < LoadOperationCommit; operation++ {
  	nextLoad:
  		for {
@@ -484,7 +484,7 @@ diff -Nru '--exclude=.git' ollama-0.17.6.org/llm/server.go ollama-0.17.6/llm/ser
  			s.loadRequest.GPULayers = gpuLayers
  			resp, err := s.initModel(ctx, s.loadRequest, operation)
  			if err != nil {
-@@ -789,6 +928,10 @@
+@@ -824,6 +963,10 @@
  				if err != nil {
  					return nil, err
  				}
@@ -495,7 +495,7 @@ diff -Nru '--exclude=.git' ollama-0.17.6.org/llm/server.go ollama-0.17.6/llm/ser
  
  				slog.Debug("new layout created", "layers", newGPULayers)
  
-@@ -825,6 +968,10 @@
+@@ -860,6 +1003,10 @@
  						}
  						slog.Debug("new layout created", "layers", newGPULayers)
  
@@ -506,7 +506,7 @@ diff -Nru '--exclude=.git' ollama-0.17.6.org/llm/server.go ollama-0.17.6/llm/ser
  						s.loadRequest.GPULayers = newGPULayers
  						resp, err = s.initModel(ctx, s.loadRequest, operation)
  						if err != nil {
-@@ -839,6 +986,10 @@
+@@ -874,6 +1021,10 @@
  							if err != nil {
  								return nil, err
  							}
@@ -517,10 +517,10 @@ diff -Nru '--exclude=.git' ollama-0.17.6.org/llm/server.go ollama-0.17.6/llm/ser
  
  							slog.Debug("verifying layout", "layers", verifyGPULayers)
  
-diff -Nru '--exclude=.git' ollama-0.17.6.org/server/routes_generate_test.go ollama-0.17.6/server/routes_generate_test.go
---- ollama-0.17.6.org/server/routes_generate_test.go	2026-03-05 03:01:55.295349822 +0700
-+++ ollama-0.17.6/server/routes_generate_test.go	2026-03-05 05:55:39.773419728 +0700
-@@ -17,6 +17,7 @@
+diff -Nru '--exclude=.git' ollama-0.23.4.org/server/routes_generate_test.go ollama-0.23.4/server/routes_generate_test.go
+--- ollama-0.23.4.org/server/routes_generate_test.go	2026-05-14 22:42:40.111140084 +0700
++++ ollama-0.23.4/server/routes_generate_test.go	2026-05-14 23:06:38.712216956 +0700
+@@ -18,6 +18,7 @@
  	"github.com/google/go-cmp/cmp"
  
  	"github.com/ollama/ollama/api"
@@ -528,7 +528,7 @@ diff -Nru '--exclude=.git' ollama-0.17.6.org/server/routes_generate_test.go olla
  	"github.com/ollama/ollama/fs/ggml"
  	"github.com/ollama/ollama/llm"
  	"github.com/ollama/ollama/manifest"
-@@ -75,8 +76,8 @@
+@@ -76,8 +77,8 @@
  
  func (mockRunner) Ping(_ context.Context) error { return nil }
  
@@ -539,55 +539,9 @@ diff -Nru '--exclude=.git' ollama-0.17.6.org/server/routes_generate_test.go olla
  		return mock, nil
  	}
  }
-diff -Nru '--exclude=.git' ollama-0.17.6.org/server/sched_test.go ollama-0.17.6/server/sched_test.go
---- ollama-0.17.6.org/server/sched_test.go	2026-03-05 03:01:55.295349822 +0700
-+++ ollama-0.17.6/server/sched_test.go	2026-03-05 06:00:02.862655786 +0700
-@@ -12,6 +12,7 @@
- 	"github.com/stretchr/testify/require"
- 
- 	"github.com/ollama/ollama/api"
-+	"github.com/ollama/ollama/envconfig"
- 	"github.com/ollama/ollama/format"
- 	"github.com/ollama/ollama/fs/ggml"
- 	"github.com/ollama/ollama/llm"
-@@ -49,7 +50,7 @@
- 		sessionDuration: &api.Duration{Duration: 2 * time.Second},
- 	}
- 	// Fail to load model first
--	s.newServerFn = func(systemInfo ml.SystemInfo, gpus []ml.DeviceInfo, model string, f *ggml.GGML, adapters []string, projectors []string, opts api.Options, numParallel int) (llm.LlamaServer, error) {
-+	s.newServerFn = func(systemInfo ml.SystemInfo, gpus []ml.DeviceInfo, model string, f *ggml.GGML, adapters []string, projectors []string, opts api.Options, numParallel int, override *envconfig.Override) (llm.LlamaServer, error) {
- 		return nil, errors.New("something failed to load model blah")
- 	}
- 	gpus := []ml.DeviceInfo{}
-@@ -64,7 +65,7 @@
- 	require.Contains(t, err.Error(), "this model may be incompatible")
- 
- 	server := &mockLlm{vramSize: 10, vramByGPU: map[ml.DeviceID]uint64{}}
--	s.newServerFn = func(systemInfo ml.SystemInfo, gpus []ml.DeviceInfo, model string, f *ggml.GGML, adapters []string, projectors []string, opts api.Options, numParallel int) (llm.LlamaServer, error) {
-+	s.newServerFn = func(systemInfo ml.SystemInfo, gpus []ml.DeviceInfo, model string, f *ggml.GGML, adapters []string, projectors []string, opts api.Options, numParallel int, override *envconfig.Override) (llm.LlamaServer, error) {
- 		server.modelPath = model
- 		return server, nil
- 	}
-@@ -136,7 +136,7 @@
- 	req     *LlmRequest
- }
- 
--func (scenario *reqBundle) newServer(systemInfo ml.SystemInfo, gpus []ml.DeviceInfo, model string, f *ggml.GGML, adapters []string, projectors []string, opts api.Options, numParallel int) (llm.LlamaServer, error) {
-+func (scenario *reqBundle) newServer(systemInfo ml.SystemInfo, gpus []ml.DeviceInfo, model string, f *ggml.GGML, adapters []string, projectors []string, opts api.Options, numParallel int, override *envconfig.Override) (llm.LlamaServer, error) {
- 	scenario.srv.modelPath = model
- 	return scenario.srv, nil
- }
-@@ -531,7 +532,7 @@
- 	gpus := []ml.DeviceInfo{}
- 	systemInfo := ml.SystemInfo{}
- 	server := &mockLlm{vramSize: 10, vramByGPU: map[ml.DeviceID]uint64{}}
--	s.newServerFn = func(systemInfo ml.SystemInfo, gpus []ml.DeviceInfo, model string, f *ggml.GGML, adapters []string, projectors []string, opts api.Options, numParallel int) (llm.LlamaServer, error) {
-+	s.newServerFn = func(systemInfo ml.SystemInfo, gpus []ml.DeviceInfo, model string, f *ggml.GGML, adapters []string, projectors []string, opts api.Options, numParallel int, override *envconfig.Override) (llm.LlamaServer, error) {
- 		server.modelPath = model
- 		return server, nil
- 	}
---- ollama-0.18.2.orig/server/sched.go.orig	2026-03-28 18:48:41.058067438 +0200
-+++ ollama-0.18.2/server/sched.go	2026-03-28 18:51:06.999153664 +0200
+diff -Nru '--exclude=.git' ollama-0.23.4.org/server/sched.go ollama-0.23.4/server/sched.go
+--- ollama-0.23.4.org/server/sched.go	2026-05-14 22:42:40.115140104 +0700
++++ ollama-0.23.4/server/sched.go	2026-05-14 23:06:38.716216905 +0700
 @@ -52,7 +52,7 @@
  	loaded        map[string]*runnerRef
  
@@ -608,3 +562,50 @@ diff -Nru '--exclude=.git' ollama-0.17.6.org/server/sched_test.go ollama-0.17.6/
  			if err != nil {
  				// some older models are not compatible with newer versions of llama.cpp
  				// show a generalized compatibility error until there is a better way to
+diff -Nru '--exclude=.git' ollama-0.23.4.org/server/sched_test.go ollama-0.23.4/server/sched_test.go
+--- ollama-0.23.4.org/server/sched_test.go	2026-05-14 22:42:40.115140104 +0700
++++ ollama-0.23.4/server/sched_test.go	2026-05-14 23:06:38.716216905 +0700
+@@ -12,6 +12,7 @@
+ 	"github.com/stretchr/testify/require"
+ 
+ 	"github.com/ollama/ollama/api"
++	"github.com/ollama/ollama/envconfig"
+ 	"github.com/ollama/ollama/format"
+ 	"github.com/ollama/ollama/fs/ggml"
+ 	"github.com/ollama/ollama/llm"
+@@ -64,7 +65,7 @@
+ 		sessionDuration: &api.Duration{Duration: 2 * time.Second},
+ 	}
+ 	// Fail to load model first
+-	s.newServerFn = func(systemInfo ml.SystemInfo, gpus []ml.DeviceInfo, model string, f *ggml.GGML, adapters []string, projectors []string, opts api.Options, numParallel int) (llm.LlamaServer, error) {
++	s.newServerFn = func(systemInfo ml.SystemInfo, gpus []ml.DeviceInfo, model string, f *ggml.GGML, adapters []string, projectors []string, opts api.Options, numParallel int, override *envconfig.Override) (llm.LlamaServer, error) {
+ 		return nil, errors.New("something failed to load model blah")
+ 	}
+ 	gpus := []ml.DeviceInfo{}
+@@ -79,7 +80,7 @@
+ 	require.Contains(t, err.Error(), "this model may be incompatible")
+ 
+ 	server := &mockLlm{vramSize: 10, vramByGPU: map[ml.DeviceID]uint64{}}
+-	s.newServerFn = func(systemInfo ml.SystemInfo, gpus []ml.DeviceInfo, model string, f *ggml.GGML, adapters []string, projectors []string, opts api.Options, numParallel int) (llm.LlamaServer, error) {
++	s.newServerFn = func(systemInfo ml.SystemInfo, gpus []ml.DeviceInfo, model string, f *ggml.GGML, adapters []string, projectors []string, opts api.Options, numParallel int, override *envconfig.Override) (llm.LlamaServer, error) {
+ 		server.modelPath = model
+ 		return server, nil
+ 	}
+@@ -135,7 +136,7 @@
+ 	req     *LlmRequest
+ }
+ 
+-func (scenario *reqBundle) newServer(systemInfo ml.SystemInfo, gpus []ml.DeviceInfo, model string, f *ggml.GGML, adapters []string, projectors []string, opts api.Options, numParallel int) (llm.LlamaServer, error) {
++func (scenario *reqBundle) newServer(systemInfo ml.SystemInfo, gpus []ml.DeviceInfo, model string, f *ggml.GGML, adapters []string, projectors []string, opts api.Options, numParallel int, override *envconfig.Override) (llm.LlamaServer, error) {
+ 	scenario.srv.modelPath = model
+ 	return scenario.srv, nil
+ }
+@@ -568,7 +569,7 @@
+ 	gpus := []ml.DeviceInfo{}
+ 	systemInfo := ml.SystemInfo{}
+ 	server := &mockLlm{vramSize: 10, vramByGPU: map[ml.DeviceID]uint64{}}
+-	s.newServerFn = func(systemInfo ml.SystemInfo, gpus []ml.DeviceInfo, model string, f *ggml.GGML, adapters []string, projectors []string, opts api.Options, numParallel int) (llm.LlamaServer, error) {
++	s.newServerFn = func(systemInfo ml.SystemInfo, gpus []ml.DeviceInfo, model string, f *ggml.GGML, adapters []string, projectors []string, opts api.Options, numParallel int, override *envconfig.Override) (llm.LlamaServer, error) {
+ 		server.modelPath = model
+ 		return server, nil
+ 	}
